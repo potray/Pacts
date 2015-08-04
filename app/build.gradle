@@ -2,12 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'Pacts Key'
-            keyPassword 'Roflmao7/'
-            storeFile file('C:/Development/AndroidProjects/Keystore.jks')
-            storePassword 'Roflmao7/'
-        }
     }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -22,10 +16,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
         debug {
-            signingConfig signingConfigs.config
         }
     }
 }

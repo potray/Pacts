@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pactos</string>
+    <string name="action_sign_in">Identifícate o regístrate</string>
+    <string name="action_sign_in_short">Registrar</string>
+    <string name="error_field_required">Este campo es obligatorio</string>
+    <string name="error_incorrect_password">Contraseña incorrecta</string>
+    <string name="error_invalid_email">Email no válido</string>
+    <string name="error_invalid_password">Contraseña muy corta.</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Contraseña (opcional)</string>
+</resources>

@@ -2,6 +2,7 @@ package es.potrayarrick.pacts;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -18,23 +19,29 @@ import backend.pacts.potrayarrick.es.registration.model.User;
 class EndpointsAsyncTask extends AsyncTask<Pair<Context, Pair<String, String>>, Void, String> {
     private static Registration registrationService = null;
     private Context context;
+    private Boolean testingOnLocal = false;
 
     @Override
     protected String doInBackground(Pair<Context, Pair<String, String>>... params) {
         if(registrationService == null) {  // Only do this once
-            Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
-                    new AndroidJsonFactory(), null)
-                    // options for running against local devappserver
-                    // - 10.0.2.2 is localhost's IP address in Android emulator
-                    // - turn off compression when running against local devappserver
-                    .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                        @Override
-                        public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                            abstractGoogleClientRequest.setDisableGZipContent(true);
-                        }
-                    });
-            // end options for devappserver
+            Registration.Builder builder;
+            if (testingOnLocal) {
+                builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // options for running against local devappserver
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        // - turn off compression when running against local devappserver
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+            }else{
+                builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+            }
 
             registrationService = builder.build();
         }
@@ -51,6 +58,7 @@ class EndpointsAsyncTask extends AsyncTask<Pair<Context, Pair<String, String>>, 
                 return "Success!";
             }else return "Error";
         } catch (IOException e) {
+            Log.d("endpoint", e.getMessage());
             return e.getMessage();
         }
     }

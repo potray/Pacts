@@ -6,18 +6,23 @@ import com.googlecode.objectify.ObjectifyService;
 
 import es.potrayarrick.pacts.backend.models.User;
 
-/**
- * Created by Daniel on 04-Aug-15.
- */
 public class OfyService {
     static {
         factory().register(User.class);
     }
 
+    /**
+     * A time saver. Just for typing less code.
+     * @return the Objectify service.
+     */
     public static Objectify ofy() {
         return ObjectifyService.ofy();
     }
 
+    /**
+     * Another time server for typing less code.
+     * @return the Objectify factory.
+     */
     public static ObjectifyFactory factory() {
         return ObjectifyService.factory();
     }

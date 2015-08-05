@@ -3,9 +3,6 @@ package es.potrayarrick.pacts.backend.models;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-/**
- * Created by Daniel on 04-Aug-15.
- */
 @Entity
 public class User {
     /**
@@ -22,7 +19,7 @@ public class User {
     /**
      * No-arg constructor for objectify.
      */
-    public User(){}
+    public User() { }
 
     /**
      * Basic constructor.
@@ -38,7 +35,7 @@ public class User {
      * Get user email.
      * @return the email of the user.
      */
-    public String getEmail() {
+    public final String getEmail() {
         return email;
     }
 
@@ -46,7 +43,7 @@ public class User {
      * Get user password.
      * @return the password of the user.
      */
-    public String getPassword(){
+    public final String getPassword() {
         return password;
     }
 }

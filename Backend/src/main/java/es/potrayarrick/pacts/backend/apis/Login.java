@@ -6,12 +6,13 @@ import com.google.api.server.spi.config.ApiNamespace;
 
 import javax.inject.Named;
 
+import es.potrayarrick.pacts.backend.Utils.Encryption;
 import es.potrayarrick.pacts.backend.models.User;
 
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 /**
- * A class for registering new users.
+ * A class for user login.
  */
 
 @Api(name = "login",
@@ -24,25 +25,28 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
 public class Login {
 
     /**
-     * Login a new user.
-     * @param email the email of the new user.
-     * @param password the password of the new user.
+     * Login a user.
+     * @param email the email of the user.
+     * @param password the password of the user.
      * @return null if the user exists, the new user if it doesn't.
      */
     @ApiMethod(name = "userLogin")
     public final User userLogin(@Named("email") final String email,
-                                       @Named("password") final String password) {
+                                @Named("password") final String password) {
 
         //Check if email exists.
         User user = ofy().load().type(User.class).id(email).now();
         if (user != null) {
-            //User exists
-            return null;
+            //User exists, check password.
+            if (user.getPassword() == Encryption.sha256Encrypt(password)) {
+                return user;
+            } else {
+                //Incorrect password.
+                return null;
+            }
         } else {
-            //Create user
-            User newUser = new User(email, password);
-            ofy().save().entity(newUser);
-            return newUser;
+            //User doesn't exists.
+            return null;
         }
     }
 

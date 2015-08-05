@@ -3,6 +3,9 @@ package es.potrayarrick.pacts.backend.models;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+/**
+ * The user of the application.
+ */
 @Entity
 public class User {
     /**
@@ -15,6 +18,16 @@ public class User {
      * The password of the user.
      */
     private String password;
+
+    /**
+     * The name of the user.
+     */
+    private String name;
+
+    /**
+     * The surname of the user.
+     */
+    private String surname;
 
     /**
      * No-arg constructor for objectify.
@@ -46,4 +59,37 @@ public class User {
     public final String getPassword() {
         return password;
     }
+
+    /**
+     * Get user surname.
+     * @return the surname of the user.
+     */
+    public final String getSurname() {
+        return surname;
+    }
+
+    /**
+     * Set user surname.
+     * @param surname the new surname of the user.
+     */
+    public final void setSurname(final String surname) {
+        this.surname = surname;
+    }
+
+    /**
+     * Get user name.
+     * @return the name of the user.
+     */
+    public final String getName() {
+        return name;
+    }
+
+    /**
+     * Set user name.
+     * @param name the new name of the user.
+     */
+    public final void setName(final String name) {
+        this.name = name;
+    }
+
 }

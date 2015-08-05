@@ -4,6 +4,10 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import es.potrayarrick.pacts.backend.Utils.PasswordHash;
 import es.potrayarrick.pacts.backend.models.User;
 
 /**
@@ -25,11 +29,17 @@ public final class OfyService {
         //If I'm debugging populate the database with testing entities. Since this only executes
         //once I do it here.
         if (DEBUG) {
-            User testUser = new User("test@test.com", "qqqqqqqq");
-            testUser.setName("Test");
-            testUser.setSurname("Testing");
-
-            ofy().save().entity(testUser);
+            User testUser;
+            try {
+                testUser = new User("test@test.com", PasswordHash.createHash("qqqqqqqq"));
+                testUser.setName("Test");
+                testUser.setSurname("Testing");
+                ofy().save().entity(testUser);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
         }
     }
 

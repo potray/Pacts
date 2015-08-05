@@ -4,9 +4,12 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.inject.Named;
 
-import es.potrayarrick.pacts.backend.Utils.Encryption;
+import es.potrayarrick.pacts.backend.Utils.PasswordHash;
 import es.potrayarrick.pacts.backend.models.User;
 
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
@@ -38,10 +41,18 @@ public class Login {
         User user = ofy().load().type(User.class).id(email).now();
         if (user != null) {
             //User exists, check password.
-            if (user.getPassword().equals(Encryption.sha256Encrypt(password))) {
-                return user;
-            } else {
-                //Incorrect password.
+            try {
+                if (PasswordHash.validatePassword(password, user.getPassword())) {
+                    return user;
+                } else {
+                    //Incorrect password.
+                    return null;
+                }
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                return null;
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
                 return null;
             }
         } else {

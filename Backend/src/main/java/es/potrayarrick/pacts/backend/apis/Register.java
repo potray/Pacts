@@ -5,10 +5,13 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.inject.Named;
 
-import es.potrayarrick.pacts.backend.Utils.Encryption;
 import es.potrayarrick.pacts.backend.Utils.Message;
+import es.potrayarrick.pacts.backend.Utils.PasswordHash;
 import es.potrayarrick.pacts.backend.models.User;
 
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
@@ -46,7 +49,16 @@ public class Register {
             return new Message(Message.ERROR);
         } else {
             //Create user and return success
-            User newUser = new User(email, Encryption.sha256Encrypt(password));
+            User newUser;
+            try {
+                newUser = new User(email, PasswordHash.createHash(password));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                return new Message(Message.ERROR);
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+                return new Message(Message.ERROR);
+            }
             newUser.setName(name);
             newUser.setSurname(surname);
 

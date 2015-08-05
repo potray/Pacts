@@ -5,7 +5,7 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>es.potrayarrick.pacts.backend.apis.Registration</param-value>
+            <param-value>es.potrayarrick.pacts.backend.apis.Login</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

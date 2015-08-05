@@ -33,8 +33,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import backend.pacts.potrayarrick.es.registration.Registration;
-import backend.pacts.potrayarrick.es.registration.model.User;
+import backend.pacts.potrayarrick.es.login.Login;
+import backend.pacts.potrayarrick.es.login.model.User;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -43,11 +44,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserLoginTask mAuthTask;
     /**
-     * The registration service.
+     *  The login service.
      */
-    private static Registration registrationService = null;
+    private static Login loginService = null;
     /**
      * For using a local server.
      */
@@ -193,6 +194,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      */
     private boolean isPasswordValid(final String password) {
         return password.length() >= MIN_PASSWORD_SIZE;
+
     }
 
     /**
@@ -318,10 +320,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         @Override
         protected final Boolean doInBackground(final Void... params) {
-            if (registrationService == null) {  // Only do this once
-                Registration.Builder builder;
+            if (loginService == null) {  // Only do this once
+                Login.Builder builder;
                 if (testingOnLocal) {
-                    builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                    builder = new Login.Builder(AndroidHttp.newCompatibleTransport(),
                             new AndroidJsonFactory(), null)
                             // - 10.0.2.2 is localhost's IP address in Android emulator
                             .setRootUrl("http://10.0.2.2:8080/_ah/api/")
@@ -332,16 +334,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                                 }
                             });
                 } else {
-                    builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                    builder = new Login.Builder(AndroidHttp.newCompatibleTransport(),
                             new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
                 }
 
-                registrationService = builder.build();
+                loginService = builder.build();
             }
 
             try {
                 //Try to get user.
-                user = registrationService.userRegistration(mEmail, mPassword).execute();
+                user = loginService.userLogin(mEmail, mPassword).execute();
                 return user != null;
             } catch (IOException e) {
                 Log.d("endpoint", e.getMessage());

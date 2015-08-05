@@ -14,23 +14,23 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
  * A class for registering new users.
  */
 
-@Api(name = "registration",
+@Api(name = "login",
         version = "0.1",
         namespace = @ApiNamespace(
                 ownerDomain = "es.potrayarrick.pacts.backend",
                 ownerName = "es.potrayarrick.pacts.backend",
                 packagePath = ""
         ))
-public class Registration {
+public class Login {
 
     /**
-     * Registration a new user.
+     * Login a new user.
      * @param email the email of the new user.
      * @param password the password of the new user.
      * @return null if the user exists, the new user if it doesn't.
      */
-    @ApiMethod(name = "userRegistration")
-    public final User userRegistration(@Named("email") final String email,
+    @ApiMethod(name = "userLogin")
+    public final User userLogin(@Named("email") final String email,
                                        @Named("password") final String password) {
 
         //Check if email exists.

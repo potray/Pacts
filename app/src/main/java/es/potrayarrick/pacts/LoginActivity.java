@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -50,10 +52,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      */
     private static Login loginService = null;
     /**
-     * For using a local server.
-     */
-    private Boolean testingOnLocal = true;
-    /**
      * The successfully logged in user.
      */
     private User user;
@@ -75,12 +73,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * The form view, for hiding both email and password inputs.
      */
     private View mLoginFormView;
-
-    //Constants
-    /**
-     * The minimum size of a password.
-     */
-    private static final int MIN_PASSWORD_SIZE = 8;
 
 
 
@@ -105,11 +97,21 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
         });
 
+        //Assign click listeners to buttons.
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 attemptLogin();
+            }
+        });
+
+        Button mRegisterButton = (Button) findViewById(R.id.register_button);
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -147,7 +149,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !Utils.isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -158,7 +160,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!Utils.isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -177,25 +179,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
-    /**
-     * Validates the format of an email.
-     * @param email the email to validate.
-     * @return true if it's a valid email, false if not.
-     */
-    private boolean isEmailValid(final String email) {
-        String emailRegex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        return email.matches(emailRegex);
-    }
 
-    /**
-     * Validates the format of a password.
-     * @param password the password to validate.
-     * @return true if the password is 8 or more characters long, false if not.
-     */
-    private boolean isPasswordValid(final String password) {
-        return password.length() >= MIN_PASSWORD_SIZE;
-
-    }
 
     /**
      * Shows the progress UI and hides the login form.
@@ -322,7 +306,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         protected final Boolean doInBackground(final Void... params) {
             if (loginService == null) {  // Only do this once
                 Login.Builder builder;
-                if (testingOnLocal) {
+                if (Utils.LOCAL_TESTING) {
                     builder = new Login.Builder(AndroidHttp.newCompatibleTransport(),
                             new AndroidJsonFactory(), null)
                             // - 10.0.2.2 is localhost's IP address in Android emulator
@@ -358,7 +342,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if (success) {
-                finish();
+                Toast.makeText(LoginActivity.this, "Login Successful. More to come!", Toast.LENGTH_SHORT).show();
                 //TODO add a new intent.
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

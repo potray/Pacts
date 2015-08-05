@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="repeat_password">Repeat password</string>
+    <string name="email_exists_error">Email already exists</string>
+    <string name="passwords_match_error">Passwords don\'t match</string>
+</resources>

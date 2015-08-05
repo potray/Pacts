@@ -26,8 +26,16 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
         ))
 
 public class Register {
+    /**
+     * Register a new user.
+     * @param email the user email.
+     * @param password the user password.
+     * @param name the user name.
+     * @param surname the user surname.
+     * @return a message telling success or error.
+     */
     @ApiMethod (name = "userRegistration")
-    public final Message userRegistration (@Named ("email") final String email,
+    public final Message userRegistration(@Named ("email") final String email,
                                            @Named ("password") final String password,
                                            @Named ("name") final String name,
                                            @Named ("surname") final String surname) {
@@ -36,9 +44,9 @@ public class Register {
         if (user != null) {
             //User exists, return error
             return new Message(Message.ERROR);
-        }else{
+        } else {
             //Create user and return success
-            User newUser = new User (email, Encryption.sha256Encrypt(password));
+            User newUser = new User(email, Encryption.sha256Encrypt(password));
             newUser.setName(name);
             newUser.setSurname(surname);
 

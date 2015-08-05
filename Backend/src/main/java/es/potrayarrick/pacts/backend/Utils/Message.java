@@ -1,8 +1,11 @@
 package es.potrayarrick.pacts.backend.Utils;
 
+import com.googlecode.objectify.annotation.Entity;
+
 /**
  * Just a string wrapper for messaging.
  */
+@Entity
 public class Message {
     /**
      * The message.
@@ -33,5 +36,23 @@ public class Message {
      */
     public final String getStr() {
         return str;
+    }
+
+    /**
+     * Method for check if the message is a success message in case the constants are inaccessible
+     * (Android client).
+     * @return if the message is success.
+     */
+    public final boolean isSuccess() {
+        return str.equals(SUCCESS);
+    }
+
+    /**
+     * Method for check if the message is an error message in case the constants are inaccessible
+     * (Android client).
+     * @return if the message is success.
+     */
+    public final boolean isError() {
+        return str.equals(ERROR);
     }
 }

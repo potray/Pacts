@@ -6,9 +6,31 @@ import com.googlecode.objectify.ObjectifyService;
 
 import es.potrayarrick.pacts.backend.models.User;
 
-public class OfyService {
+/**
+ * A wrapper class for the Objectify Service.
+ */
+public final class OfyService {
+    /**
+     * For debugging.
+     */
+    private static final boolean DEBUG = false;
+
+    /**
+     * Private constructor so this class can't be instanced.
+     */
+    private OfyService() { }
+
     static {
         factory().register(User.class);
+        //If I'm debugging populate the database with testing entities. Since this only executes
+        //once I do it here.
+        if (DEBUG) {
+            User testUser = new User("test@test.com", "qqqqqqqq");
+            testUser.setName("Test");
+            testUser.setSurname("Testing");
+
+            ofy().save().entity(testUser);
+        }
     }
 
     /**

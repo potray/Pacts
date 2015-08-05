@@ -38,7 +38,7 @@ public class Login {
         User user = ofy().load().type(User.class).id(email).now();
         if (user != null) {
             //User exists, check password.
-            if (user.getPassword() == Encryption.sha256Encrypt(password)) {
+            if (user.getPassword().equals(Encryption.sha256Encrypt(password))) {
                 return user;
             } else {
                 //Incorrect password.

@@ -8,6 +8,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,7 +25,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -80,6 +80,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Check if the user is already logged in
+
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -179,7 +182,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
-
+    /**
+     * Launch main activity
+     */
+    private final void launchMainActivity (){
+        Intent intent = new Intent (LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     /**
      * Shows the progress UI and hides the login form.
@@ -342,8 +352,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if (success) {
-                Toast.makeText(LoginActivity.this, "Login Successful. More to come!", Toast.LENGTH_SHORT).show();
-                //TODO add a new intent.
+                //Store user data
+                SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                launchMainActivity();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

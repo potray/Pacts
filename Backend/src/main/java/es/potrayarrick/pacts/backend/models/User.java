@@ -92,4 +92,14 @@ public class User {
         this.name = name;
     }
 
+
+    /**
+     * Get the user key.
+     * @return the key of the user.
+     */
+    /*@Transient
+    public final Key<User> getKey() {
+        return Key.create(User.class, email);
+    }*/
+
 }

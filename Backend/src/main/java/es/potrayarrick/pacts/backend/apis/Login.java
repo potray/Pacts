@@ -60,14 +60,4 @@ public class Login {
             return null;
         }
     }
-
-    /**
-     * This is just a test method to check persistence. It shouldn't be used.
-     * @param email an email to check.
-     * @return a string containing the email and password of the user.
-     */
-    private User testMethod(final String email) {
-        User u = ofy().load().type(User.class).filter("email", email).first().now();
-        return u;
-    }
 }

@@ -1,7 +1,10 @@
 package es.potrayarrick.pacts.backend.models;
 
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+
+import java.util.ArrayList;
 
 /**
  * The user of the application.
@@ -28,6 +31,21 @@ public class User {
      * The surname of the user.
      */
     private String surname;
+
+    /**
+     * The friends of the user.
+     */
+    private ArrayList<Key<User>> friends = new ArrayList<>();
+
+    /**
+     * The friend requests the user has sent.
+     */
+    private ArrayList<Key<FriendRequest>> sentFriendRequests = new ArrayList<>();
+
+    /**
+     * The friend requests the user has received.
+     */
+    private ArrayList<Key<FriendRequest>> receivedFriendRequests = new ArrayList<>();
 
     /**
      * No-arg constructor for objectify.
@@ -92,14 +110,27 @@ public class User {
         this.name = name;
     }
 
+    /**
+     * Adds a new friend to the friend list.
+     * @param friend the key of new friend to add.
+     */
+    public final void addFriend(final Key<User> friend) {
+        friends.add(friend);
+    }
 
     /**
-     * Get the user key.
-     * @return the key of the user.
+     * Adds a new friend request to the sent ones.
+     * @param request the key of the sent request.
      */
-    /*@Transient
-    public final Key<User> getKey() {
-        return Key.create(User.class, email);
-    }*/
+    public final void sendFriendRequest(final Key<FriendRequest> request) {
+        sentFriendRequests.add(request);
+    }
 
+    /**
+     * Adds a new friend request to the received ones.
+     * @param request the key of the received request.
+     */
+    public final void receiveFriendRequest(final Key<FriendRequest> request) {
+        receivedFriendRequests.add(request);
+    }
 }

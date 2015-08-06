@@ -1,12 +1,23 @@
 package es.potrayarrick.pacts;
 
 import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
+import java.io.IOException;
+
+import backend.pacts.potrayarrick.es.friends.Friends;
 
 
 /**
@@ -26,6 +37,8 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static Friends friendsService = null;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,7 +71,56 @@ public class FriendsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // TODO: Delete this since it's just for testing. And the class.
+        UserRegistrationTask task = new UserRegistrationTask();
+        task.execute();
     }
+
+    private class UserRegistrationTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * The email of the new user.
+         */
+        private String email1, email2;
+        UserRegistrationTask(){
+        }
+
+        @Override
+        protected Boolean doInBackground(final Void... params) {
+            if (friendsService == null) {  // Only do this once
+                Friends.Builder builder;
+                if (Utils.LOCAL_TESTING) {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null)
+                            // - 10.0.2.2 is localhost's IP address in Android emulator
+                            .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                                @Override
+                                public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                    abstractGoogleClientRequest.setDisableGZipContent(true);
+                                }
+                            });
+                } else {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+                }
+
+                friendsService = builder.build();
+            }
+
+            try {
+                //Try to register the user.
+                String message = friendsService.test("test@test.com", "friend@friend.com").execute().getStr();
+                Log.d("testing", message);
+                return true;
+            } catch (IOException e) {
+                Log.d("endpoint", e.getMessage());
+                e.printStackTrace();
+            }
+            return true;
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

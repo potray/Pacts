@@ -61,12 +61,14 @@ public final class Utils {
          * The name of a user.
          */
         public static final String USER_NAME = "user name";
-
         /**
          * The surname of a user.
          */
         public static final String USER_SURNAME = "user surname";
-
+        /**
+         * If a user is logged in or not.
+         */
+        public static final String USER_LOGGED_IN = "user logged in";
 
         /**
          * Private constructor to prevent instances.

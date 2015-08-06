@@ -82,7 +82,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
 
         // Check if the user is already logged in
-
+        SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
+        if (preferences.getBoolean(Utils.Strings.USER_LOGGED_IN, false)) {
+            launchMainActivity();
+        }
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -183,10 +186,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     /**
-     * Launch main activity
+     * Launch main activity.
      */
-    private final void launchMainActivity (){
-        Intent intent = new Intent (LoginActivity.this, MainActivity.class);
+    private void launchMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
@@ -355,6 +358,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 //Store user data
                 SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
                 SharedPreferences.Editor editor = preferences.edit();
+
+                editor.putString(Utils.Strings.USER_EMAIL, user.getEmail());
+                editor.putString(Utils.Strings.USER_NAME, user.getName());
+                editor.putString(Utils.Strings.USER_SURNAME, user.getSurname());
+                editor.putBoolean(Utils.Strings.USER_LOGGED_IN, true);
+
+                editor.commit();
 
                 launchMainActivity();
             } else {

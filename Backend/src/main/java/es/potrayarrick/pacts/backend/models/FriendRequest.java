@@ -24,6 +24,15 @@ public class FriendRequest {
     private Key<User> receiver;
 
     /**
+     * Accept a friend request string.
+     */
+    public static final String ACCEPT_ANSWER = "accept";
+    /**
+     * Refuse a friend request string.
+     */
+    public static final String REFUSE_ANSWER = "refuse";
+
+    /**
      * No-arg constructor for objectify.
      */
     public FriendRequest() { }

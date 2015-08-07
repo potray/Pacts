@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         ProfileFragment.OnFragmentInteractionListener,
         FriendsFragment.OnFragmentInteractionListener,
-        PactsFragment.OnFragmentInteractionListener {
+        PactsFragment.OnFragmentInteractionListener{
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -66,6 +66,20 @@ public class MainActivity extends AppCompatActivity implements
         Log.d("main", "onNavigationDrawerItemSelected " + position);
         if (fragments != null) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
+
+            //Update action bar title
+            switch (position) {
+                case 0:
+                    mTitle = getString(R.string.title_section_pacts);
+                    break;
+                case 1:
+                    mTitle = getString(R.string.title_section_profile);
+                    break;
+                case 2:
+                    mTitle = getString(R.string.title_section_friends);
+                    break;
+            }
+            restoreActionBar();
         }
     }
 

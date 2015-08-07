@@ -235,6 +235,10 @@ public class NavigationDrawerFragment extends Fragment {
         // If the drawer is open, show the global app actions in the action bar. See also
         // showGlobalContextActionBar, which controls the top-left area of the action bar.
         if (mDrawerLayout != null && isDrawerOpen()) {
+            // Clear open fragment menu.
+            menu.clear();
+            // Inflate global menu.
+            // TODO put here the actual global menu.
             inflater.inflate(R.menu.global, menu);
             showGlobalContextActionBar();
         }

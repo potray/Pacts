@@ -83,7 +83,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         // Check if the user is already logged in
         SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
-        if (preferences.getBoolean(Utils.Strings.USER_LOGGED_IN, false) && !Utils.LOCAL_TESTING) {
+        if (preferences.getBoolean(Utils.Strings.USER_LOGGED_IN, false)) {
             launchMainActivity();
         }
 

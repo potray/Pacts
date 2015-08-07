@@ -23,4 +23,12 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Menus -->
+    <string name="action_add_friend">Add friend</string>
+
+    <!-- Friends -->
+    <string name="title_find_user_by_email">Add new friend</string>
+    <string name="send_request">Send friend request</string>
+    <string name="request_sent">Your request was sent</string>
 </resources>

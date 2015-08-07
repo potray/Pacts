@@ -25,7 +25,13 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
                 packagePath = ""
         ))
 public class Friends {
+    /**
+     * String for accepting a friend request.
+     */
     public static final String ACCEPT = "accept friend request";
+    /**
+     * String for rejecting a friend request.
+     */
     public static final String REJECT = "reject friend request";
     /**
      * A user sends a friend request to another.
@@ -59,13 +65,19 @@ public class Friends {
     }
 
 
+    /**
+     * Answer a friend request.
+     * @param requestKey The request of the request to answer.
+     * @param answer The answer.
+     * @return A message with SUCCESS, for communication purposes.
+     */
     @ApiMethod(name = "answerFriendRequest")
     public final Message answerFriendRequest(@Named ("requestKey") final String requestKey,
                                              @Named ("answer") final String answer) {
         //Get the request
         FriendRequest request = (FriendRequest) ofy().load().key(Key.create(requestKey)).now();
 
-        switch (answer){
+        switch (answer) {
             case FriendRequest.ACCEPT_ANSWER:
                 //Add friends and delete the request.
                 Key<User> receiverKey, senderKey;
@@ -85,11 +97,25 @@ public class Friends {
             case FriendRequest.REFUSE_ANSWER:
                 //TODO send a notification message to the sender.
             break;
+            default:
+                break;
 
         }
         //The request needs to be deleted.
         ofy().delete().entity(request);
 
         return new Message(Message.SUCCESS);
+    }
+
+    /**
+     * Find user by email.
+     * @param email the email of the user to find.
+     * @return the user if found, null if not.
+     */
+
+    @ApiMethod(name = "findUserByEmail")
+    public final User findUserByEmail(@Named ("email") final String email) {
+        //Find user
+        return ofy().load().type(User.class).id(email).now();
     }
 }

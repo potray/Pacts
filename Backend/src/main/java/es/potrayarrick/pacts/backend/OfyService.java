@@ -32,7 +32,7 @@ public final class OfyService {
         //If I'm debugging populate the database with testing entities. Since this only executes
         //once I do it here.
         if (DEBUG) {
-            User testUser, testFriend;
+            User testUser, testFriend, testFriend2;
             FriendRequest request;
             try {
                 System.out.println("Debugging");
@@ -44,16 +44,26 @@ public final class OfyService {
                 testFriend.setName("Friend");
                 testFriend.setSurname("Friendly");
 
+                testFriend2 = new User("friend2@friend.com", PasswordHash.createHash("qqqqqqqq"));
+                testFriend2.setName("Friend2");
+                testFriend2.setSurname("Friendly2");
+
                 ofy().save().entity(testUser);
                 ofy().save().entity(testFriend);
+                ofy().save().entity(testFriend2);
 
                 Key<User> testUserKey = Key.create(testUser);
                 Key<User> testFriendKey = Key.create(testFriend);
+                Key<User> testFriend2Key = Key.create(testFriend2);
+
+                testFriend2.addFriend(testUserKey);
+                testUser.addFriend(testFriend2Key);
 
                 request = new FriendRequest(testUserKey, testFriendKey);
 
                 ofy().save().entity(testUser);
                 ofy().save().entity(testFriend);
+                ofy().save().entity(testFriend2);
                 ofy().save().entity(request);
 
 

@@ -31,4 +31,6 @@
     <string name="title_find_user_by_email">Add new friend</string>
     <string name="send_request">Send friend request</string>
     <string name="request_sent">Your request was sent</string>
+    <string name="error_user_does_not_exist">The user doesn\'t exist</string>
+    <string name="error_cannot_friend_yourself">You can\'t be your own friend</string>
 </resources>

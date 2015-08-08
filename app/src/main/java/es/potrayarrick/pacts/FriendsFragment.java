@@ -2,16 +2,24 @@ package es.potrayarrick.pacts;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import backend.pacts.potrayarrick.es.friends.Friends;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import backend.pacts.potrayarrick.es.friends.model.User;
 
 
 /**
@@ -23,19 +31,12 @@ import backend.pacts.potrayarrick.es.friends.Friends;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_FRIENDS = "friends";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<User> mFriends;
 
-    /**
-     * The friend service.
-     */
-    private static Friends friendsService = null;
+    private ListView mFriendsList;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -43,16 +44,13 @@ public class FriendsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param friends a list with the friends of the user.
      * @return A new instance of fragment FriendsFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static FriendsFragment newInstance(String param1, String param2) {
+    public static FriendsFragment newInstance(ArrayList<User> friends) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_FRIENDS, friends);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,9 +62,9 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mFriends = (ArrayList<User>) getArguments().getSerializable(ARG_FRIENDS);
         }
     }
 
@@ -77,7 +75,35 @@ public class FriendsFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false);
+        View view = inflater.inflate(R.layout.fragment_friends, container, false);
+
+        // UI elements
+        mFriendsList = (ListView) view.findViewById(R.id.friends_list);
+
+        // Get all friends names for the list.
+        ArrayList <String> friendNames = new ArrayList<>();
+        for (User friend : mFriends){
+            friendNames.add(friend.getName());
+        }
+
+        // Set adapter
+        FriendsArrayAdapter adapter = new FriendsArrayAdapter(view.getContext(),
+                android.R.layout.simple_list_item_1, friendNames);
+        mFriendsList.setAdapter(adapter);
+
+        mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                // TODO launch friend fragment.
+            }
+
+        });
+
+
+        Log.d("FriendsFragment", "createview: " + friendNames.toString());
+        Log.d("FriendsFragment", String.valueOf(adapter.getCount()));
+        return view;
     }
 
     @Override
@@ -139,6 +165,30 @@ public class FriendsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private class FriendsArrayAdapter extends ArrayAdapter<String> {
+
+        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+
+        public FriendsArrayAdapter(Context context, int viewId, ArrayList <String> friendNames){
+            super(context, viewId, friendNames);
+            for (int i = 0; i < friendNames.size(); ++i) {
+                mIdMap.put(friendNames.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            String item = getItem(position);
+            return mIdMap.get(item);
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
     }
 
 }

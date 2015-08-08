@@ -5,6 +5,8 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.googlecode.objectify.Key;
 
+import java.util.ArrayList;
+
 import javax.inject.Named;
 
 import es.potrayarrick.pacts.backend.Utils.Message;
@@ -42,26 +44,29 @@ public class Friends {
     @ApiMethod(name = "sendFriendRequest")
     public final Message sendFriendRequest(@Named ("senderEmail") final String senderEmail,
                                             @Named ("receiverEmail") final String receiverEmail) {
-        // Get both users. Note: it's not necessary to check if both sender and receiver exists since
-        // it's not possible to send a request to someone who doesn't exist.
         User sender = ofy().load().type(User.class).id(senderEmail).now();
         User receiver = ofy().load().type(User.class).id(receiverEmail).now();
 
-        Key<User> senderKey = Key.create(sender);
-        Key<User> receiverKey = Key.create(receiver);
+        //Check if receiver exists.
+        if (receiver == null){
+            return new Message(Message.ERROR);
+        } else {
+            Key<User> senderKey = Key.create(sender);
+            Key<User> receiverKey = Key.create(receiver);
 
-        //Create the request
-        FriendRequest request = new FriendRequest(senderKey, receiverKey);
-        ofy().save().entity(request);
-        Key<FriendRequest> requestKey = Key.create(request);
-        sender.sendFriendRequest(requestKey);
-        receiver.receiveFriendRequest(requestKey);
+            //Create the request
+            FriendRequest request = new FriendRequest(senderKey, receiverKey);
+            ofy().save().entity(request).now();
+            Key<FriendRequest> requestKey = Key.create(request);
+            sender.sendFriendRequest(requestKey);
+            receiver.receiveFriendRequest(requestKey);
 
-        //Save entities
-        ofy().save().entity(sender);
-        ofy().save().entity(receiver);
+            //Save entities
+            ofy().save().entity(sender);
+            ofy().save().entity(receiver);
 
-        return new Message(Message.SUCCESS);
+            return new Message(Message.SUCCESS);
+        }
     }
 
 
@@ -113,9 +118,10 @@ public class Friends {
      * @return the user if found, null if not.
      */
 
-    @ApiMethod(name = "findUserByEmail")
-    public final User findUserByEmail(@Named ("email") final String email) {
+    @ApiMethod(name = "getUserFriends")
+    public final ArrayList<User> getUserFriends(@Named("email") final String email) {
         //Find user
-        return ofy().load().type(User.class).id(email).now();
+        User user = ofy().load().type(User.class).id(email).now();
+        return user.getFriends();
     }
 }

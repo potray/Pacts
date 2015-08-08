@@ -1,6 +1,7 @@
 package es.potrayarrick.pacts;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -9,7 +10,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import backend.pacts.potrayarrick.es.friends.Friends;
+import backend.pacts.potrayarrick.es.friends.model.User;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -31,12 +41,21 @@ public class MainActivity extends AppCompatActivity implements
     private PactsFragment mPactsFragment;
     private FriendsFragment mFriendsFragment;
 
+    private UserInfoTask mUserInfoTask;
+    private static Friends friendsService = null;
+    private String mEmail;
+
     private ArrayList<android.app.Fragment> fragments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("MainActivity", "On create!");
+
+        // TODO delete this, it's just for testing.
+        backend.pacts.potrayarrick.es.friends.model.User user = new backend.pacts.potrayarrick.es.friends.model.User();
 
         //Create fragments
         mProfileFragment = new ProfileFragment();
@@ -58,6 +77,13 @@ public class MainActivity extends AppCompatActivity implements
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // Set up services
+        mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
+        mUserInfoTask = new UserInfoTask(mEmail);
+        mUserInfoTask.execute();
+
+        Log.d("Main", "Executed async task");
     }
 
     @Override
@@ -136,5 +162,51 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    private class UserInfoTask extends AsyncTask <Void, Void, Boolean>{
+
+        private final String mEmail;
+
+        private UserInfoTask(String mEmail) {
+            this.mEmail = mEmail;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Log.d("Main - Asynctask", "Background!");
+            // Get user friends
+            if (friendsService == null) {   // Only do this once
+                Friends.Builder builder;
+                if (Utils.LOCAL_TESTING) {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null)
+                            // - 10.0.2.2 is localhost's IP address in Android emulator
+                            .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                                @Override
+                                public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                    abstractGoogleClientRequest.setDisableGZipContent(true);
+                                }
+                            });
+                } else {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+                }
+
+                friendsService = builder.build();
+            }
+
+            try {
+                ArrayList<User> friends = new ArrayList<>(friendsService.getUserFriends(mEmail).execute().getItems());
+                Bundle friendsFragmentBundle = new Bundle();
+                friendsFragmentBundle.putSerializable("friends", friends);
+                mFriendsFragment.setArguments(friendsFragmentBundle);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
     }
 }

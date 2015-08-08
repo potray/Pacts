@@ -6,6 +6,8 @@ import com.googlecode.objectify.annotation.Id;
 
 import java.util.ArrayList;
 
+import static es.potrayarrick.pacts.backend.OfyService.ofy;
+
 /**
  * The user of the application.
  */
@@ -132,5 +134,28 @@ public class User {
      */
     public final void receiveFriendRequest(final Key<FriendRequest> request) {
         receivedFriendRequests.add(request);
+    }
+
+    /**
+     * Checks if an user is a friend of this.
+     * @param user the user to check.
+     * @return true if both users are friends.
+     */
+    public final boolean isFriendOf (final User user){
+        return friends.contains(Key.create(user));
+    }
+
+    /**
+     * Gets the friends of the user.
+     * @return a list of User.
+     */
+    public final ArrayList<User> getFriends (){
+        ArrayList<User> friends = new ArrayList<>();
+
+        for (Key <User> key:this.friends) {
+            friends.add(ofy().load().key(key).now());
+        }
+
+        return friends;
     }
 }

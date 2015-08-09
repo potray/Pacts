@@ -3,9 +3,7 @@ package es.potrayarrick.pacts;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,12 +29,13 @@ import backend.pacts.potrayarrick.es.friends.model.User;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
-    private static final String ARG_FRIENDS = "friends";
+    public static final String ARG_FRIENDS = "friends";
+    public static final String ARG_HIDE_REQUESTS_MENU = "hide requests menu";
 
     private ArrayList<User> mFriends;
+    private boolean mHideFriendRequestsMenu;
 
-    private ListView mFriendsList;
-
+    private ListView mFriendsView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,13 +43,14 @@ public class FriendsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param friends a list with the friends of the user.
+     * @param friends a list with the mFriends of the user.
      * @return A new instance of fragment FriendsFragment.
      */
-    public static FriendsFragment newInstance(ArrayList<User> friends) {
+    public static FriendsFragment newInstance(ArrayList<User> friends, boolean showRequestsMenu) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIENDS, friends);
+        args.putBoolean(ARG_HIDE_REQUESTS_MENU, showRequestsMenu);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,11 +60,13 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
+    @SuppressWarnings("unchecked") // This is for the casting warning.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
             mFriends = (ArrayList<User>) getArguments().getSerializable(ARG_FRIENDS);
+            mHideFriendRequestsMenu = getArguments().getBoolean(ARG_HIDE_REQUESTS_MENU);
         }
     }
 
@@ -78,9 +80,9 @@ public class FriendsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         // UI elements
-        mFriendsList = (ListView) view.findViewById(R.id.friends_list);
+        mFriendsView = (ListView) view.findViewById(R.id.friends_list);
 
-        // Get all friends names for the list.
+        // Get all mFriends names for the list.
         ArrayList <String> friendNames = new ArrayList<>();
         for (User friend : mFriends){
             friendNames.add(friend.getName());
@@ -89,9 +91,9 @@ public class FriendsFragment extends Fragment {
         // Set adapter
         FriendsArrayAdapter adapter = new FriendsArrayAdapter(view.getContext(),
                 android.R.layout.simple_list_item_1, friendNames);
-        mFriendsList.setAdapter(adapter);
+        mFriendsView.setAdapter(adapter);
 
-        mFriendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mFriendsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
@@ -99,10 +101,6 @@ public class FriendsFragment extends Fragment {
             }
 
         });
-
-
-        Log.d("FriendsFragment", "createview: " + friendNames.toString());
-        Log.d("FriendsFragment", String.valueOf(adapter.getCount()));
         return view;
     }
 
@@ -110,8 +108,11 @@ public class FriendsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_friends_add:
-                SendFriendRequestDialogFragment dialog = new SendFriendRequestDialogFragment();
-                dialog.show(getFragmentManager(), "Fragment");
+                SendFriendRequestDialogFragment friendRequestDialogFragment = new SendFriendRequestDialogFragment();
+                friendRequestDialogFragment.show(getFragmentManager(), "Fragment");
+                return true;
+            case R.id.menu_friends_requests:
+                onMenuItemClick(OnFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,12 +126,16 @@ public class FriendsFragment extends Fragment {
         menu.clear();
         // Swap menu bars.
         inflater.inflate(R.menu.menu_friends, menu);
+
+        // Hide friend requests menu if necessary.
+        if(mHideFriendRequestsMenu){
+            menu.findItem(R.id.menu_friends_requests).setVisible(false);
+        }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onMenuItemClick(String action) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onMenuClick(action);
         }
     }
 
@@ -152,19 +157,10 @@ public class FriendsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        String SHOW_FRIEND_REQUEST_FRAGMENT = "show friend request fragment";
+
+        public void onMenuClick(String action);
     }
 
     private class FriendsArrayAdapter extends ArrayAdapter<String> {

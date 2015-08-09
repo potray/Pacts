@@ -4,6 +4,8 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+import static es.potrayarrick.pacts.backend.OfyService.ofy;
+
 /**
  * This class manages friend requests.
  */
@@ -40,7 +42,7 @@ public class FriendRequest {
     /**
      * Default constructor.
      * @param sender The key of the user who sent the request.
-     * @param receiver Thekey of the user the sender sent the request to.
+     * @param receiver The -key of the user the sender sent the request to.
      */
     public FriendRequest(final Key<User> sender, final Key<User> receiver) {
         this.sender = sender;
@@ -51,15 +53,15 @@ public class FriendRequest {
      * Get the user who sent the request.
      * @return the user who sent the request.
      */
-    public final Key<User> getSender() {
-        return sender;
+    public final User getSender() {
+        return ofy().load().key(sender).now();
     }
 
     /**
      * Get the user who received the request.
      * @return the user who received the request.
      */
-    public final Key<User> getReceiver() {
-        return receiver;
+    public final User getReceiver() {
+        return ofy().load().key(receiver).now();
     }
 }

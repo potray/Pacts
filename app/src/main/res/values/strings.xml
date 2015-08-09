@@ -21,16 +21,21 @@
 
     <string name="action_example">Example action</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- Menus -->
     <string name="action_add_friend">Add friend</string>
+    <string name="action_view_friend_requests">Friend requests</string>
 
     <!-- Friends -->
     <string name="title_find_user_by_email">Add new friend</string>
+    <string name="title_manage_friend_requests"> Manage friend requests</string>
     <string name="send_request">Send friend request</string>
     <string name="request_sent">Your request was sent</string>
     <string name="error_user_does_not_exist">The user doesn\'t exist</string>
     <string name="error_cannot_friend_yourself">You can\'t be your own friend</string>
+    <string name="action_accept_friend_request">Accept</string>
+    <string name="action_reject_friend_request">Reject</string>
+
+    <!-- Profile -->
+    <string name="placeholder_name_surname">Test Testing</string>
+
 </resources>

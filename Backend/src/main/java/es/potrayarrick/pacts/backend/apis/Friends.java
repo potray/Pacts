@@ -48,7 +48,7 @@ public class Friends {
         User receiver = ofy().load().type(User.class).id(receiverEmail).now();
 
         //Check if receiver exists.
-        if (receiver == null){
+        if (receiver == null) {
             return new Message(Message.ERROR);
         } else {
             Key<User> senderKey = Key.create(sender);
@@ -86,14 +86,12 @@ public class Friends {
             case FriendRequest.ACCEPT_ANSWER:
                 //Add friends and delete the request.
                 Key<User> receiverKey, senderKey;
-                receiverKey = request.getReceiver();
-                senderKey = request.getSender();
 
-                User receiver = ofy().load().key(receiverKey).now();
-                User sender = ofy().load().key(senderKey).now();
+                User receiver = request.getReceiver();
+                User sender = request.getSender();
 
-                receiver.addFriend(senderKey);
-                sender.addFriend(receiverKey);
+                receiver.addFriend(Key.create(sender));
+                sender.addFriend(Key.create(receiver));
 
                 ofy().save().entity(receiver);
                 ofy().save().entity(sender);
@@ -113,9 +111,9 @@ public class Friends {
     }
 
     /**
-     * Find user by email.
-     * @param email the email of the user to find.
-     * @return the user if found, null if not.
+     * Get an user's friends.
+     * @param email the email of the user.
+     * @return the friends of the user.
      */
 
     @ApiMethod(name = "getUserFriends")
@@ -123,5 +121,18 @@ public class Friends {
         //Find user
         User user = ofy().load().type(User.class).id(email).now();
         return user.getFriends();
+    }
+
+    /**
+     * Get an user's pending friend requests.
+     * @param email the email of the user.
+     * @return the pending friend requests of the user.
+     */
+
+    @ApiMethod(name = "getUserFriendRequests")
+    public final ArrayList<FriendRequest> getUserFriendRequests(@Named("email") final String email) {
+        //Find user
+        User user = ofy().load().type(User.class).id(email).now();
+        return user.getPendingFriendRequests();
     }
 }

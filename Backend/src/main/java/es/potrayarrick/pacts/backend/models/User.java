@@ -1,5 +1,6 @@
 package es.potrayarrick.pacts.backend.models;
 
+import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -22,6 +23,7 @@ public class User {
     /**
      * The password of the user.
      */
+    @JsonIgnore
     private String password;
 
     /**
@@ -37,6 +39,7 @@ public class User {
     /**
      * The friends of the user.
      */
+    @JsonIgnore
     private ArrayList<Key<User>> friends = new ArrayList<>();
 
     /**
@@ -141,7 +144,7 @@ public class User {
      * @param user the user to check.
      * @return true if both users are friends.
      */
-    public final boolean isFriendOf (final User user){
+    public final boolean isFriendOf(final User user) {
         return friends.contains(Key.create(user));
     }
 
@@ -149,13 +152,29 @@ public class User {
      * Gets the friends of the user.
      * @return a list of User.
      */
-    public final ArrayList<User> getFriends (){
+    @JsonIgnore
+    public final ArrayList<User> getFriends() {
         ArrayList<User> friends = new ArrayList<>();
 
-        for (Key <User> key:this.friends) {
+        for (Key<User> key:this.friends) {
             friends.add(ofy().load().key(key).now());
         }
 
         return friends;
+    }
+
+    /**
+     * Gets the pending friend requests of the user.
+     * @return a list of friend requests.
+     */
+    @JsonIgnore
+    public final ArrayList<FriendRequest> getPendingFriendRequests() {
+        ArrayList<FriendRequest> pendingRequests = new ArrayList<>();
+
+        for (Key<FriendRequest> key:receivedFriendRequests) {
+            pendingRequests.add(ofy().load().key(key).now());
+        }
+
+        return pendingRequests;
     }
 }

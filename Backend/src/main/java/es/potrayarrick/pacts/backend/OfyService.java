@@ -33,7 +33,7 @@ public final class OfyService {
         //once I do it here.
         if (DEBUG) {
             User testUser, testFriend, testFriend2;
-            FriendRequest request;
+            FriendRequest request, request2;
             try {
                 System.out.println("Debugging");
                 testUser = new User("test@test.com", PasswordHash.createHash("qqqqqqqq"));
@@ -60,11 +60,22 @@ public final class OfyService {
                 testUser.addFriend(testFriend2Key);
 
                 request = new FriendRequest(testUserKey, testFriendKey);
+                request2 =  new FriendRequest(testFriendKey, testUserKey);
 
-                ofy().save().entity(testUser);
-                ofy().save().entity(testFriend);
-                ofy().save().entity(testFriend2);
-                ofy().save().entity(request);
+                ofy().save().entity(request).now();
+                ofy().save().entity(request2).now();
+
+                Key<FriendRequest> requestKey = Key.create(request);
+                Key<FriendRequest> request2Key = Key.create(request2);
+
+                testUser.sendFriendRequest(requestKey);
+                testFriend.receiveFriendRequest(requestKey);
+                testFriend.sendFriendRequest(request2Key);
+                testUser.receiveFriendRequest(request2Key);
+
+                ofy().save().entity(testUser).now();
+                ofy().save().entity(testFriend).now();
+                ofy().save().entity(testFriend2).now();
 
 
                 System.out.println("Debugged!");

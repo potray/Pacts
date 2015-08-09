@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import backend.pacts.potrayarrick.es.friends.Friends;
+import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 import backend.pacts.potrayarrick.es.friends.model.User;
 
 public class MainActivity extends AppCompatActivity implements
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProfileFragment mProfileFragment;
     private PactsFragment mPactsFragment;
     private FriendsFragment mFriendsFragment;
+    private ReceivedFriendRequestFragment mReceivedFriendRequestFragment;
 
     private UserInfoTask mUserInfoTask;
     private static Friends friendsService = null;
@@ -52,15 +54,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("MainActivity", "On create!");
-
-        // TODO delete this, it's just for testing.
-        backend.pacts.potrayarrick.es.friends.model.User user = new backend.pacts.potrayarrick.es.friends.model.User();
-
         //Create fragments
         mProfileFragment = new ProfileFragment();
         mPactsFragment = new PactsFragment();
         mFriendsFragment = new FriendsFragment();
+        mReceivedFriendRequestFragment = new ReceivedFriendRequestFragment();
 
         fragments = new ArrayList<>();
         fragments.add(mPactsFragment);
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements
         mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
         mUserInfoTask = new UserInfoTask(mEmail);
         mUserInfoTask.execute();
-
-        Log.d("Main", "Executed async task");
     }
 
     @Override
@@ -164,6 +160,15 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onMenuClick(String action) {
+        switch(action){
+            case FriendsFragment.OnFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
+                // Show friend requests fragment
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment).commit();
+        }
+    }
+
     private class UserInfoTask extends AsyncTask <Void, Void, Boolean>{
 
         private final String mEmail;
@@ -174,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Log.d("Main - Asynctask", "Background!");
-            // Get user friends
+            // Set user friends service
             if (friendsService == null) {   // Only do this once
                 Friends.Builder builder;
                 if (Utils.LOCAL_TESTING) {
@@ -198,10 +202,20 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             try {
+                // Get user info (friends, requests...) and send them to the correct fragment.
                 ArrayList<User> friends = new ArrayList<>(friendsService.getUserFriends(mEmail).execute().getItems());
+                ArrayList<FriendRequest> requests = new ArrayList<>(friendsService.getUserFriendRequests(mEmail).execute().getItems());
+
                 Bundle friendsFragmentBundle = new Bundle();
-                friendsFragmentBundle.putSerializable("friends", friends);
+                Bundle friendRequestsFragmentBundle = new Bundle();
+
+                friendsFragmentBundle.putSerializable(FriendsFragment.ARG_FRIENDS, friends);
+                friendRequestsFragmentBundle.putSerializable(ReceivedFriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
+                friendRequestsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, requests.isEmpty());
+
                 mFriendsFragment.setArguments(friendsFragmentBundle);
+                mReceivedFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
+
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

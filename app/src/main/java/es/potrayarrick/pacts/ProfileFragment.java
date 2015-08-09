@@ -1,12 +1,16 @@
 package es.potrayarrick.pacts;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import backend.pacts.potrayarrick.es.friends.model.User;
 
 
 /**
@@ -18,14 +22,10 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_USER = "user";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private User user;
 
     private OnFragmentInteractionListener mListener;
 
@@ -33,16 +33,15 @@ public class ProfileFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param user the user of the profile. <b>Note: </b> User class is serializable but since it's
+     *             imported from the backend the compiler doesn't recognize it. That's why this is an
+     *             ArrayList instead of an User.
      * @return A new instance of fragment ProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(final ArrayList<User> user) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,11 +51,13 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
+    @SuppressWarnings("unchecked") // This is for the casting warning.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            ArrayList<User> userArrayList = (ArrayList<User>) getArguments().getSerializable(ARG_USER);
+            assert userArrayList != null;
+            user = userArrayList.get(0);
         }
     }
 

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_friends_requests"
+        android:title="@string/action_view_friend_requests"
+        android:icon="@drawable/ic_notifications_white_24dp"
+        app:showAsAction="always"/>
     <item android:id="@+id/menu_friends_add"
         android:title="@string/action_add_friend"
         android:icon="@drawable/ic_add_white_24dp"

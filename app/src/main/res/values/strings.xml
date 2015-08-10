@@ -32,6 +32,7 @@
     <string name="request_sent">Your request was sent</string>
     <string name="error_user_does_not_exist">The user doesn\'t exist</string>
     <string name="error_cannot_friend_yourself">You can\'t be your own friend</string>
+    <string name="error_already_friends">That user is already your friend</string>
     <string name="action_accept_friend_request">Accept</string>
     <string name="action_reject_friend_request">Reject</string>
 

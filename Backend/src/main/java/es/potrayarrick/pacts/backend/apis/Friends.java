@@ -28,14 +28,6 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
         ))
 public class Friends {
     /**
-     * String for accepting a friend request.
-     */
-    public static final String ACCEPT = "accept friend request";
-    /**
-     * String for rejecting a friend request.
-     */
-    public static final String REJECT = "reject friend request";
-    /**
      * A user sends a friend request to another.
      * @param senderEmail the user who sent the request.
      * @param receiverEmail the user to receive the request.
@@ -49,10 +41,15 @@ public class Friends {
 
         //Check if receiver exists.
         if (receiver == null) {
-            return new Message(Message.ERROR);
+            return new Message(Message.ERROR_USER_NOT_FOUND);
         } else {
             Key<User> senderKey = Key.create(sender);
             Key<User> receiverKey = Key.create(receiver);
+
+            //Check if they are friends.
+            if (sender.isFriendOf(receiver)){
+                return new Message(Message.ERROR_ALREADY_FRIENDS);
+            }
 
             //Create the request
             FriendRequest request = new FriendRequest(senderKey, receiverKey);

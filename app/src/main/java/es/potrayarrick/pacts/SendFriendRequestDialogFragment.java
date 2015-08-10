@@ -83,7 +83,7 @@ public class SendFriendRequestDialogFragment extends DialogFragment {
     /**
      * An asynchronous task for sending a friend request to backend.
      */
-    private class SendFriendRequestTask extends AsyncTask<Void, Void, Boolean> {
+    private class SendFriendRequestTask extends AsyncTask<Void, Void, String> {
 
         /**
          * The receiver email.
@@ -113,7 +113,7 @@ public class SendFriendRequestDialogFragment extends DialogFragment {
         }
 
         @Override
-        protected Boolean doInBackground(final Void... params) {
+        protected String doInBackground(final Void... params) {
             // Get the service
             if (friendsService == null) {
                 Friends.Builder builder;
@@ -138,23 +138,34 @@ public class SendFriendRequestDialogFragment extends DialogFragment {
             // Send the request
             try {
                 Message response = friendsService.sendFriendRequest(senderEmail, receiverEmail).execute();
-                return response.getSuccess();
+                return response.getStr();
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
+                return null;
             }
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final String message) {
             mSendFriendRequestTask = null;
-            if (success) {
-                Toast toast = Toast.makeText(context, getString(R.string.request_sent), Toast.LENGTH_SHORT);
-                toast.show();
-                dismiss();
-            } else {
-                mEmailEditText.setError(getString(R.string.error_user_does_not_exist));
-                mEmailEditText.requestFocus();
+            Toast toast;
+            switch (message) {
+                case "Success":
+                    toast = Toast.makeText(context, getString(R.string.request_sent), Toast.LENGTH_SHORT);
+                    toast.show();
+                    dismiss();
+                    break;
+                case "Already friends":
+                    toast = Toast.makeText(context, getString(R.string.error_already_friends), Toast.LENGTH_SHORT);
+                    toast.show();
+                    dismiss();
+                    break;
+                case "User not found":
+                    mEmailEditText.setError(getString(R.string.error_user_does_not_exist));
+                    mEmailEditText.requestFocus();
+                    break;
+                default:
+                    break;
             }
         }
     }

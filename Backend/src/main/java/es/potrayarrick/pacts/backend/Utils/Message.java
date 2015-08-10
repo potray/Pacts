@@ -23,6 +23,16 @@ public class Message {
     public static final String SUCCESS = "Success";
 
     /**
+     * Already friends string.
+     */
+    public static final String ERROR_ALREADY_FRIENDS = "Already friends";
+
+    /**
+     * User not found string.
+     */
+    public static final String ERROR_USER_NOT_FOUND = "User not found";
+
+    /**
      * Default constructor.
      * @param str the message.
      */

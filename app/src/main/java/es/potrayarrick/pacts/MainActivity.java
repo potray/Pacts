@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,18 +20,23 @@ import java.util.ArrayList;
 
 import backend.pacts.potrayarrick.es.friends.Friends;
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
+import backend.pacts.potrayarrick.es.friends.model.Message;
 import backend.pacts.potrayarrick.es.friends.model.User;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         ProfileFragment.OnFragmentInteractionListener,
-        FriendsFragment.OnFragmentInteractionListener,
-        PactsFragment.OnFragmentInteractionListener{
+        FriendsFragment.OnFriendsFragmentInteractionListener,
+        PactsFragment.OnFragmentInteractionListener,
+        ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener{
 
+    private static final String TAG = "MainActivity";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
+
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -44,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements
     private ReceivedFriendRequestFragment mReceivedFriendRequestFragment;
 
     private UserInfoTask mUserInfoTask;
-    private static Friends friendsService = null;
+    private ManageFriendRequestTask mManageFriendRequestTask;
+    private static Friends mFriendsService = null;
     private String mEmail;
 
     private ArrayList<android.app.Fragment> fragments;
@@ -80,12 +86,12 @@ public class MainActivity extends AppCompatActivity implements
         mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
         mUserInfoTask = new UserInfoTask(mEmail);
         mUserInfoTask.execute();
+        mManageFriendRequestTask = new ManageFriendRequestTask();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // Update the main content by replacing fragments
-        Log.d("main", "onNavigationDrawerItemSelected " + position);
         if (fragments != null) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
 
@@ -163,9 +169,38 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onMenuClick(String action) {
         switch(action){
-            case FriendsFragment.OnFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
-                // Show friend requests fragment
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment).commit();
+            case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
+                // Show friend requests fragment, putting the current fragment in the back stack.
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
+                        .addToBackStack(null).commit();
+        }
+    }
+
+    @Override
+    public void onFriendRequestInteraction(FriendRequest request, String message) {
+        mManageFriendRequestTask.execute(new Pair<>(request,message));
+    }
+
+    private void setUpFriendService(){
+        if (mFriendsService == null) {   // Only do this once
+            Friends.Builder builder;
+            if (Utils.LOCAL_TESTING) {
+                builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+            } else {
+                builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+            }
+
+            mFriendsService = builder.build();
         }
     }
 
@@ -179,32 +214,12 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // Set user friends service
-            if (friendsService == null) {   // Only do this once
-                Friends.Builder builder;
-                if (Utils.LOCAL_TESTING) {
-                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
-                            new AndroidJsonFactory(), null)
-                            // - 10.0.2.2 is localhost's IP address in Android emulator
-                            .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                                @Override
-                                public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                    abstractGoogleClientRequest.setDisableGZipContent(true);
-                                }
-                            });
-                } else {
-                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
-                            new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
-                }
-
-                friendsService = builder.build();
-            }
+            setUpFriendService();
 
             try {
                 // Get user info (friends, requests...) and send them to the correct fragment.
-                ArrayList<User> friends = new ArrayList<>(friendsService.getUserFriends(mEmail).execute().getItems());
-                ArrayList<FriendRequest> requests = new ArrayList<>(friendsService.getUserFriendRequests(mEmail).execute().getItems());
+                ArrayList<User> friends = new ArrayList<>(mFriendsService.getUserFriends(mEmail).execute().getItems());
+                ArrayList<FriendRequest> requests = new ArrayList<>(mFriendsService.getUserFriendRequests(mEmail).execute().getItems());
 
                 Bundle friendsFragmentBundle = new Bundle();
                 Bundle friendRequestsFragmentBundle = new Bundle();
@@ -221,6 +236,44 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
                 return false;
             }
+        }
+    }
+
+    private class ManageFriendRequestTask extends AsyncTask <Pair<FriendRequest, String>, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Pair<FriendRequest, String>... params) {
+            setUpFriendService();
+            FriendRequest request = params[0].first;
+            String response = params[0].second;
+
+            try {
+                Message message = mFriendsService.answerFriendRequest(request.getId(), response).execute();
+
+                if (message.getSuccess()){
+                    // Delete the request.
+                    mReceivedFriendRequestFragment.deleteRequest(request);
+
+                    // Check if friends fragment should hide requests fragment.
+                    mFriendsFragment.setHideFriendRequestMenu(mReceivedFriendRequestFragment.checkRequestCount());
+
+                    // We need to reattach the received friend requests fragment to update it.
+                    getFragmentManager().beginTransaction()
+                            .detach(mReceivedFriendRequestFragment)
+                            .attach(mReceivedFriendRequestFragment)
+                            .commit();
+
+                    if (response.equals(ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)){
+                        // Add a new friend
+                        mFriendsFragment.addFriend(request.getSender());
+                        // We don't need to reattach this fragment since we don't need to redraw it immediately.
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }

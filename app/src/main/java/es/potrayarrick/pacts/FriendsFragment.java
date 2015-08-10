@@ -23,7 +23,7 @@ import backend.pacts.potrayarrick.es.friends.model.User;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FriendsFragment.OnFragmentInteractionListener} interface
+ * {@link OnFriendsFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link FriendsFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -37,7 +37,7 @@ public class FriendsFragment extends Fragment {
 
     private ListView mFriendsView;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFriendsFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -46,6 +46,7 @@ public class FriendsFragment extends Fragment {
      * @param friends a list with the mFriends of the user.
      * @return A new instance of fragment FriendsFragment.
      */
+    @SuppressWarnings("unused")
     public static FriendsFragment newInstance(ArrayList<User> friends, boolean showRequestsMenu) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
@@ -57,6 +58,24 @@ public class FriendsFragment extends Fragment {
 
     public FriendsFragment() {
         // Required empty public constructor
+    }
+
+    public interface OnFriendsFragmentInteractionListener {
+        String SHOW_FRIEND_REQUEST_FRAGMENT = "show friend request fragment";
+
+        void onMenuClick(String action);
+    }
+
+    public void addFriend (User friend){
+        mFriends.add(friend);
+    }
+
+    public void deleteFriend (User friend){
+        mFriends.remove(friend);
+    }
+
+    public void setHideFriendRequestMenu (boolean hide){
+        mHideFriendRequestsMenu = hide;
     }
 
     @Override
@@ -112,7 +131,7 @@ public class FriendsFragment extends Fragment {
                 friendRequestDialogFragment.show(getFragmentManager(), "Fragment");
                 return true;
             case R.id.menu_friends_requests:
-                onMenuItemClick(OnFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT);
+                onMenuItemClick(OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -144,10 +163,10 @@ public class FriendsFragment extends Fragment {
         super.onAttach(activity);
         setHasOptionsMenu(true);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFriendsFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnFriendsFragmentInteractionListener");
         }
     }
 
@@ -157,15 +176,10 @@ public class FriendsFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        String SHOW_FRIEND_REQUEST_FRAGMENT = "show friend request fragment";
-
-        public void onMenuClick(String action);
-    }
 
     private class FriendsArrayAdapter extends ArrayAdapter<String> {
 
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+        HashMap<String, Integer> mIdMap = new HashMap<>();
 
         public FriendsArrayAdapter(Context context, int viewId, ArrayList <String> friendNames){
             super(context, viewId, friendNames);

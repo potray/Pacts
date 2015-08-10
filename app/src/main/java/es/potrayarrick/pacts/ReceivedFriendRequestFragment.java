@@ -1,13 +1,16 @@
 package es.potrayarrick.pacts;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +27,8 @@ public class ReceivedFriendRequestFragment extends Fragment{
 
     private ListView mFriendRequestView;
 
+    private OnFriendRequestFragmentInteractionListener mListener;
+
     static ReceivedFriendRequestFragment newIntance (ArrayList<FriendRequest> friendRequests){
         ReceivedFriendRequestFragment fragment = new ReceivedFriendRequestFragment();
         Bundle args = new Bundle();
@@ -34,6 +39,17 @@ public class ReceivedFriendRequestFragment extends Fragment{
 
     public ReceivedFriendRequestFragment() {
         // Required empty public constructor
+    }
+
+    public interface OnFriendRequestFragmentInteractionListener {
+        String ACCEPT_REQUEST = "accept";
+        String REJECT_REQUEST = "reject";
+
+        public void onFriendRequestInteraction (FriendRequest request, String message);
+    }
+
+    public boolean checkRequestCount (){
+        return mFriendRequests.isEmpty();
     }
 
     @Override
@@ -52,6 +68,8 @@ public class ReceivedFriendRequestFragment extends Fragment{
         // Inflate the view
         View view = inflater.inflate(R.layout.fragment_received_friend_requests, container, false);
 
+        // Add back button to the action bar
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // UI elements
         mFriendRequestView = (ListView) view.findViewById(R.id.friend_request_listView);
 
@@ -67,6 +85,36 @@ public class ReceivedFriendRequestFragment extends Fragment{
         return view;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        setHasOptionsMenu(true);
+        try {
+            mListener = (OnFriendRequestFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFriendRequestFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public void deleteRequest (FriendRequest request){
+        mFriendRequests.remove(request);
+    }
+
+
+    private void onFriendRequestInteraction (FriendRequest request, String message){
+        if (mListener != null){
+            mListener.onFriendRequestInteraction(request, message);
+        }
+    }
+
+
     private class FriendRequestsArrayAdapter extends ArrayAdapter<String>{
         private final Context context;
         private final ArrayList<String> names;
@@ -79,7 +127,7 @@ public class ReceivedFriendRequestFragment extends Fragment{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // Check if an existing view is being reused, otherwise inflate the view
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_element_received_friend_request, parent, false);
@@ -89,10 +137,33 @@ public class ReceivedFriendRequestFragment extends Fragment{
             TextView senderNameView = (TextView) convertView.findViewById(R.id.request_sender_name);
             senderNameView.setText(names.get(position));
 
-            // TODO button adapter.
+            // Button callbacks
+            Button acceptRequestButton = (Button) convertView.findViewById(R.id.accept_button);
+            Button rejectRequestButton = (Button) convertView.findViewById(R.id.reject_button);
+
+            acceptRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FriendRequest request = mFriendRequests.get(position);
+
+                    // Tell the main activity to send info to backend.
+                    onFriendRequestInteraction(request, OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST);
+                }
+            });
+
+            rejectRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FriendRequest request = mFriendRequests.get(position);
+
+                    // Tell the main activity to send info to backend.
+                    onFriendRequestInteraction(request, OnFriendRequestFragmentInteractionListener.REJECT_REQUEST);
+                }
+            });
 
             return convertView;
 
         }
     }
+
 }

@@ -72,20 +72,19 @@ public class Friends {
 
     /**
      * Answer a friend request.
-     * @param requestKey The request of the request to answer.
+     * @param requestId The request of the request to answer.
      * @param answer The answer.
      * @return A message with SUCCESS, for communication purposes.
      */
     @ApiMethod(name = "answerFriendRequest")
-    public final Message answerFriendRequest(@Named ("requestKey") final String requestKey,
+    public final Message answerFriendRequest(@Named ("requestId") final long requestId,
                                              @Named ("answer") final String answer) {
         //Get the request
-        FriendRequest request = (FriendRequest) ofy().load().key(Key.create(requestKey)).now();
+        FriendRequest request = ofy().load().type(FriendRequest.class).id(requestId).now();
 
         switch (answer) {
             case FriendRequest.ACCEPT_ANSWER:
                 //Add friends and delete the request.
-                Key<User> receiverKey, senderKey;
 
                 User receiver = request.getReceiver();
                 User sender = request.getSender();

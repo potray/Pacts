@@ -64,4 +64,10 @@ public class FriendRequest {
     public final User getReceiver() {
         return ofy().load().key(receiver).now();
     }
+
+
+    public Long getId() {
+        return id;
+    }
+
 }

@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements
         PactsFragment.OnFragmentInteractionListener,
         ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener{
 
+    /**
+     * A debugging tag.
+     */
+    @SuppressWarnings("unused")
     private static final String TAG = "MainActivity";
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void onSectionAttached(int number) {
+    /*public void onSectionAttached(int number) {
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section_pacts);
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
                 mTitle = getString(R.string.title_section_friends);
                 break;
         }
-    }
+    }*/
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -241,7 +245,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private class ManageFriendRequestTask extends AsyncTask <Pair<FriendRequest, String>, Void, Boolean> {
         @Override
-        protected Boolean doInBackground(Pair<FriendRequest, String>... params) {
+        @SafeVarargs
+        protected final Boolean doInBackground(Pair<FriendRequest, String>... params) {
             setUpFriendService();
             FriendRequest request = params[0].first;
             String response = params[0].second;

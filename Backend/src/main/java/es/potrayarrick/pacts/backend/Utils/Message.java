@@ -44,6 +44,7 @@ public class Message {
      * Get the message.
      * @return the message.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final String getStr() {
         return str;
     }
@@ -53,6 +54,7 @@ public class Message {
      * (Android client).
      * @return if the message is success.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final boolean isSuccess() {
         return str.equals(SUCCESS);
     }
@@ -62,6 +64,7 @@ public class Message {
      * (Android client).
      * @return if the message is success.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final boolean isError() {
         return str.equals(ERROR);
     }

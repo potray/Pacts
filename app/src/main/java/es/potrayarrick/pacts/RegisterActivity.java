@@ -223,7 +223,6 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 //Try to register the user.
                 Message message = registrationService.userRegistration(email, password, name, surname).execute();
-                //TODO check if this actually works...
                 return message.getSuccess();
             } catch (IOException e) {
                 Log.d("endpoint", e.getMessage());
@@ -238,7 +237,6 @@ public class RegisterActivity extends AppCompatActivity {
             if (success) {
                 Log.d("post execute", "onPostExecute " + success.toString());
                 finish();
-                //TODO add a new intent.
             } else {
                 mEmailView.setError(getString(R.string.email_exists_error));
                 mEmailView.requestFocus();

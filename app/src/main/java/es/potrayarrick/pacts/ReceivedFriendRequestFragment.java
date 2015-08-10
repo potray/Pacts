@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
  */
 public class ReceivedFriendRequestFragment extends Fragment {
     /**
-     * An argument name for {@link #newInstance(ArrayList<FriendRequest> friendRequests)} <code>friendRequests</code> parameter.
+     * An argument name for {@link #newIntance(ArrayList)} <code>friendRequests</code> parameter.
      */
     public static final String ARG_FRIEND_REQUESTS = "friend requests";
 
@@ -32,10 +33,9 @@ public class ReceivedFriendRequestFragment extends Fragment {
      */
     private ArrayList<FriendRequest> mFriendRequests;
 
-    private ListView mFriendRequestView;
-
     private OnFriendRequestFragmentInteractionListener mListener;
 
+    @SuppressWarnings("unused")
     static ReceivedFriendRequestFragment newIntance (ArrayList<FriendRequest> friendRequests){
         ReceivedFriendRequestFragment fragment = new ReceivedFriendRequestFragment();
         Bundle args = new Bundle();
@@ -52,7 +52,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
         String ACCEPT_REQUEST = "accept";
         String REJECT_REQUEST = "reject";
 
-        public void onFriendRequestInteraction (FriendRequest request, String message);
+        void onFriendRequestInteraction (FriendRequest request, String message);
     }
 
     public boolean checkRequestCount (){
@@ -76,9 +76,12 @@ public class ReceivedFriendRequestFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_received_friend_requests, container, false);
 
         // Add back button to the action bar
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionbar != null){
+            actionbar.setDisplayHomeAsUpEnabled(true);
+        }
         // UI elements
-        mFriendRequestView = (ListView) view.findViewById(R.id.friend_request_listView);
+        ListView mFriendRequestView = (ListView) view.findViewById(R.id.friend_request_listView);
 
         // Get friends name
         ArrayList<String> mFriendRequestSenderNames = new ArrayList<>();
@@ -123,12 +126,10 @@ public class ReceivedFriendRequestFragment extends Fragment {
 
 
     private class FriendRequestsArrayAdapter extends ArrayAdapter<String>{
-        private final Context context;
         private final ArrayList<String> names;
 
         public FriendRequestsArrayAdapter (Context context, ArrayList<String> names){
             super(context, R.layout.list_element_received_friend_request, names);
-            this.context = context;
             this.names = new ArrayList<>(names);
 
         }

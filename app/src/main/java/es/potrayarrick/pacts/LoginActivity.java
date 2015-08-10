@@ -364,7 +364,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 editor.putString(Utils.Strings.USER_SURNAME, user.getSurname());
                 editor.putBoolean(Utils.Strings.USER_LOGGED_IN, true);
 
-                editor.commit();
+                editor.apply();
 
                 launchMainActivity();
             } else {

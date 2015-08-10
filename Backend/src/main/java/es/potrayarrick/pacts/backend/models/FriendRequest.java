@@ -37,6 +37,7 @@ public class FriendRequest {
     /**
      * No-arg constructor for objectify.
      */
+    @SuppressWarnings("unused")
     public FriendRequest() { }
 
     /**
@@ -65,8 +66,12 @@ public class FriendRequest {
         return ofy().load().key(receiver).now();
     }
 
-
-    public Long getId() {
+    /**
+     * Get the request id.
+     * @return the request id.
+     */
+    @SuppressWarnings("unused") // The frontend uses this method.
+    public final Long getId() {
         return id;
     }
 

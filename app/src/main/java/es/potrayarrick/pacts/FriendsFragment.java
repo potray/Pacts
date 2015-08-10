@@ -29,25 +29,39 @@ import backend.pacts.potrayarrick.es.friends.model.User;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
+    /**
+     * An argument name for {@link #newInstance(ArrayList, boolean)} <code>friends</code> parameter.
+     */
     public static final String ARG_FRIENDS = "friends";
+    /**
+     * An argument name for {@link #newInstance(ArrayList, boolean)} <code>showRequestsMenu</code> parameter.
+     */
     public static final String ARG_HIDE_REQUESTS_MENU = "hide requests menu";
 
+    /**
+     * A list containing the user's friends.
+     */
     private ArrayList<User> mFriends;
+    /**
+     * True if the friend requests menu button should be hidden.
+     */
     private boolean mHideFriendRequestsMenu;
 
-    private ListView mFriendsView;
-
+    /**
+     * The fragment's interface to communicate with {@link MainActivity}.
+     */
     private OnFriendsFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param friends a list with the mFriends of the user.
+     * @param friends a list with the user's friends.
+     * @param showRequestsMenu whether or not the friend requests menu button should be hidden.
      * @return A new instance of fragment FriendsFragment.
      */
     @SuppressWarnings("unused")
-    public static FriendsFragment newInstance(ArrayList<User> friends, boolean showRequestsMenu) {
+    public static FriendsFragment newInstance(final ArrayList<User> friends, final boolean showRequestsMenu) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIENDS, friends);
@@ -56,31 +70,55 @@ public class FriendsFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Required empty public constructor.
+     */
     public FriendsFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * An interface to communicate with {@link MainActivity}.
+     */
     public interface OnFriendsFragmentInteractionListener {
+        /**
+         * Tells {@link MainActivity} to show the friend requests fragment.
+         */
         String SHOW_FRIEND_REQUEST_FRAGMENT = "show friend request fragment";
 
+        /**
+         * Tells {@link MainActivity} to do an action.
+         * @param action the action to do.
+         */
         void onMenuClick(String action);
     }
 
-    public void addFriend (User friend){
+    /**
+     * Add a friend to {@link #mFriends}.
+     * @param friend the friend to add.
+     */
+    public final void addFriend(final User friend) {
         mFriends.add(friend);
     }
 
-    public void deleteFriend (User friend){
+    /**
+     * Delete a friend from {@link #mFriends}.
+     * @param friend the friend to Delete.
+     */
+    public final void deleteFriend(final User friend) {
         mFriends.remove(friend);
     }
 
-    public void setHideFriendRequestMenu (boolean hide){
+    /**
+     * Sets {@link #mHideFriendRequestsMenu}.
+     * @param hide the new {@link #mHideFriendRequestsMenu}.
+     */
+    public final void setHideFriendRequestMenu(final boolean hide) {
         mHideFriendRequestsMenu = hide;
     }
 
     @Override
     @SuppressWarnings("unchecked") // This is for the casting warning.
-    public void onCreate(Bundle savedInstanceState) {
+    public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -90,8 +128,8 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         // We have a menu in this fragment.
         setHasOptionsMenu(true);
 
@@ -99,11 +137,11 @@ public class FriendsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         // UI elements
-        mFriendsView = (ListView) view.findViewById(R.id.friends_list);
+        ListView mFriendsView = (ListView) view.findViewById(R.id.friends_list);
 
         // Get all mFriends names for the list.
-        ArrayList <String> friendNames = new ArrayList<>();
-        for (User friend : mFriends){
+        ArrayList<String> friendNames = new ArrayList<>();
+        for (User friend : mFriends) {
             friendNames.add(friend.getName());
         }
 
@@ -115,7 +153,7 @@ public class FriendsFragment extends Fragment {
         mFriendsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
                 // TODO launch friend fragment.
             }
 
@@ -124,14 +162,14 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+    public final boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.menu_friends_add:
                 SendFriendRequestDialogFragment friendRequestDialogFragment = new SendFriendRequestDialogFragment();
                 friendRequestDialogFragment.show(getFragmentManager(), "Fragment");
                 return true;
             case R.id.menu_friends_requests:
-                onMenuItemClick(OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT);
+                onFriendRequestsMenuItemClick(OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -139,7 +177,7 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public final void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         // Clear previous menu
         menu.clear();
@@ -147,21 +185,28 @@ public class FriendsFragment extends Fragment {
         inflater.inflate(R.menu.menu_friends, menu);
 
         // Hide friend requests menu if necessary.
-        if(mHideFriendRequestsMenu){
+        if (mHideFriendRequestsMenu) {
             menu.findItem(R.id.menu_friends_requests).setVisible(false);
         }
     }
 
-    public void onMenuItemClick(String action) {
+
+    /**
+     * Tells {@link #mListener} to communicate with {@link MainActivity}.
+     * @param action the action {@link MainActivity} should perform.
+     */
+    public final void onFriendRequestsMenuItemClick(final String action) {
         if (mListener != null) {
             mListener.onMenuClick(action);
         }
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
+
+        // Control whether or not the activity implements the interface.
         try {
             mListener = (OnFriendsFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
@@ -171,17 +216,28 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-
+    /**
+     * The adapter for the friends list.
+     */
     private class FriendsArrayAdapter extends ArrayAdapter<String> {
 
-        HashMap<String, Integer> mIdMap = new HashMap<>();
+        /**
+         * A temporal {@link HashMap} for showing the friends' names.
+         */
+        private HashMap<String, Integer> mIdMap = new HashMap<>();
 
-        public FriendsArrayAdapter(Context context, int viewId, ArrayList <String> friendNames){
+        /**
+         * Default constructor.
+         * @param context the context of the view.
+         * @param viewId the id of the layout to inflate.
+         * @param friendNames a list with the user's friends' names.
+         */
+        public FriendsArrayAdapter(final Context context, final int viewId, final ArrayList<String> friendNames) {
             super(context, viewId, friendNames);
             for (int i = 0; i < friendNames.size(); ++i) {
                 mIdMap.put(friendNames.get(i), i);
@@ -189,7 +245,7 @@ public class FriendsFragment extends Fragment {
         }
 
         @Override
-        public long getItemId(int position) {
+        public long getItemId(final int position) {
             String item = getItem(position);
             return mIdMap.get(item);
         }

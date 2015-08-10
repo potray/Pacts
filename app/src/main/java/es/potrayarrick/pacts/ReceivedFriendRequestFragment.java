@@ -18,12 +18,19 @@ import java.util.ArrayList;
 
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 
-public class ReceivedFriendRequestFragment extends Fragment{
+/**
+ * A fragment for managing friend requests.
+ */
+public class ReceivedFriendRequestFragment extends Fragment {
+    /**
+     * An argument name for {@link #newInstance(ArrayList<FriendRequest> friendRequests)} <code>friendRequests</code> parameter.
+     */
     public static final String ARG_FRIEND_REQUESTS = "friend requests";
 
+    /**
+     * A list with the user's friend requests.
+     */
     private ArrayList<FriendRequest> mFriendRequests;
-
-    private ArrayList<String> mFriendRequestSenderNames;
 
     private ListView mFriendRequestView;
 
@@ -74,7 +81,7 @@ public class ReceivedFriendRequestFragment extends Fragment{
         mFriendRequestView = (ListView) view.findViewById(R.id.friend_request_listView);
 
         // Get friends name
-        mFriendRequestSenderNames = new ArrayList<>();
+        ArrayList<String> mFriendRequestSenderNames = new ArrayList<>();
         for (FriendRequest request: mFriendRequests){
             mFriendRequestSenderNames.add(request.getSender().getName() + " " + request.getSender().getSurname());
         }

@@ -55,6 +55,7 @@ public class User {
     /**
      * No-arg constructor for objectify.
      */
+    @SuppressWarnings("unused")
     public User() { }
 
     /**
@@ -71,6 +72,7 @@ public class User {
      * Get user email.
      * @return the email of the user.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final String getEmail() {
         return email;
     }
@@ -87,6 +89,7 @@ public class User {
      * Get user surname.
      * @return the surname of the user.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final String getSurname() {
         return surname;
     }
@@ -103,6 +106,7 @@ public class User {
      * Get user name.
      * @return the name of the user.
      */
+    @SuppressWarnings("unused") // The client uses this method.
     public final String getName() {
         return name;
     }

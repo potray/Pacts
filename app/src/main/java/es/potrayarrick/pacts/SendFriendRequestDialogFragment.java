@@ -114,39 +114,33 @@ public class SendFriendRequestDialogFragment extends DialogFragment {
 
         @Override
         protected Boolean doInBackground(final Void... params) {
-
-            // This is just a quick integrity check.
-            if (!senderEmail.isEmpty()) {
-                // Get the service
-                if (friendsService == null) {
-                    Friends.Builder builder;
-                    if (Utils.LOCAL_TESTING) {
-                        builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
-                                new AndroidJsonFactory(), null)
-                                // - 10.0.2.2 is localhost's IP address in Android emulator
-                                .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                                    @Override
-                                    public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                        abstractGoogleClientRequest.setDisableGZipContent(true);
-                                    }
-                                });
-                    } else {
-                        builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
-                                new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
-                    }
-                    friendsService = builder.build();
+            // Get the service
+            if (friendsService == null) {
+                Friends.Builder builder;
+                if (Utils.LOCAL_TESTING) {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null)
+                            // - 10.0.2.2 is localhost's IP address in Android emulator
+                            .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                                @Override
+                                public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                    abstractGoogleClientRequest.setDisableGZipContent(true);
+                                }
+                            });
+                } else {
+                    builder = new Friends.Builder(AndroidHttp.newCompatibleTransport(),
+                            new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
                 }
+                friendsService = builder.build();
+            }
 
-                // Send the request
-                try {
-                    Message response = friendsService.sendFriendRequest(senderEmail, receiverEmail).execute();
-                    return response.getSuccess();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            } else {
+            // Send the request
+            try {
+                Message response = friendsService.sendFriendRequest(senderEmail, receiverEmail).execute();
+                return response.getSuccess();
+            } catch (IOException e) {
+                e.printStackTrace();
                 return false;
             }
         }

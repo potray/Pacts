@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        
+
         //Get UI references
         mEmailView = (EditText) findViewById(R.id.email_register_form);
         mPasswordView = (EditText) findViewById(R.id.password_register_form);

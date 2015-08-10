@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +24,15 @@ import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 import backend.pacts.potrayarrick.es.friends.model.Message;
 import backend.pacts.potrayarrick.es.friends.model.User;
 
+/**
+ * The main activity of the app.
+ */
 public class MainActivity extends AppCompatActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         ProfileFragment.OnFragmentInteractionListener,
         FriendsFragment.OnFriendsFragmentInteractionListener,
         PactsFragment.OnFragmentInteractionListener,
-        ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener{
+        ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener {
 
     /**
      * A debugging tag.
@@ -40,27 +44,53 @@ public class MainActivity extends AppCompatActivity implements
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-
-
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
 
+    /**
+     * The profile fragment.
+     */
     private ProfileFragment mProfileFragment;
+    /**
+     * The pacts fragment.
+     */
     private PactsFragment mPactsFragment;
+    /**
+     * The friends fragment.
+     */
     private FriendsFragment mFriendsFragment;
+    /**
+     * The received friend requests fragment.
+     */
     private ReceivedFriendRequestFragment mReceivedFriendRequestFragment;
 
+    /**
+     * The task for retrieving user info from backend.
+     */
     private UserInfoTask mUserInfoTask;
+    /**
+     * The task for sending friend requests responses to backend.
+     */
     private ManageFriendRequestTask mManageFriendRequestTask;
+    /**
+     * The friends backend service.
+     */
     private static Friends mFriendsService = null;
+
+    /**
+     * The user email.
+     */
     private String mEmail;
 
+    /**
+     * A list of fragment that are managed by the drawer.
+     */
     private ArrayList<android.app.Fragment> fragments;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -94,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public final void onNavigationDrawerItemSelected(final int position) {
         // Update the main content by replacing fragments
         if (fragments != null) {
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
@@ -110,35 +140,29 @@ public class MainActivity extends AppCompatActivity implements
                 case 2:
                     mTitle = getString(R.string.title_section_friends);
                     break;
+                default:
+                    break;
             }
             restoreActionBar();
         }
     }
 
-    /*public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section_pacts);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section_profile);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section_friends);
-                break;
-        }
-    }*/
-
-    public void restoreActionBar() {
+    /**
+     * Restores the action bar, mainly for updating the title.
+     */
+    public final void restoreActionBar() {
+        Log.d(TAG, "restoreActionBar");
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
     }
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public final boolean onCreateOptionsMenu(final Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu");
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
@@ -151,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -166,26 +190,32 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(final Uri uri) {
 
     }
 
     @Override
-    public void onMenuClick(String action) {
-        switch(action){
+    public final void onMenuClick(final String action) {
+        switch (action) {
             case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
                 // Show friend requests fragment, putting the current fragment in the back stack.
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
                         .addToBackStack(null).commit();
+                break;
+            default:
+                break;
         }
     }
 
     @Override
-    public void onFriendRequestInteraction(FriendRequest request, String message) {
-        mManageFriendRequestTask.execute(new Pair<>(request,message));
+    public final void onFriendRequestInteraction(final FriendRequest request, final String message) {
+        mManageFriendRequestTask.execute(new Pair<>(request, message));
     }
 
-    private void setUpFriendService(){
+    /**
+     * Sets up the friend service.
+     */
+    private void setUpFriendService() {
         if (mFriendsService == null) {   // Only do this once
             Friends.Builder builder;
             if (Utils.LOCAL_TESTING) {
@@ -208,16 +238,25 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private class UserInfoTask extends AsyncTask <Void, Void, Boolean>{
-
+    /**
+     * A task to get the user info.
+     */
+    private final class UserInfoTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * The email of the user.
+         */
         private final String mEmail;
 
-        private UserInfoTask(String mEmail) {
+        /**
+         * Deffault constructor.
+         * @param mEmail the email of the user.
+         */
+        private UserInfoTask(final String mEmail) {
             this.mEmail = mEmail;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(final Void... params) {
             setUpFriendService();
 
             try {
@@ -243,10 +282,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private class ManageFriendRequestTask extends AsyncTask <Pair<FriendRequest, String>, Void, Boolean> {
+    /**
+     * A task for managing friend requests.
+     */
+    private class ManageFriendRequestTask extends AsyncTask<Pair<FriendRequest, String>, Void, Boolean> {
         @Override
         @SafeVarargs
-        protected final Boolean doInBackground(Pair<FriendRequest, String>... params) {
+        protected final Boolean doInBackground(final Pair<FriendRequest, String>... params) {
             setUpFriendService();
             FriendRequest request = params[0].first;
             String response = params[0].second;
@@ -254,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 Message message = mFriendsService.answerFriendRequest(request.getId(), response).execute();
 
-                if (message.getSuccess()){
+                if (message.getSuccess()) {
                     // Delete the request.
                     mReceivedFriendRequestFragment.deleteRequest(request);
 
@@ -267,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements
                             .attach(mReceivedFriendRequestFragment)
                             .commit();
 
-                    if (response.equals(ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)){
+                    if (response.equals(ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)) {
                         // Add a new friend
                         mFriendsFragment.addFriend(request.getSender());
                         // We don't need to reattach this fragment since we don't need to redraw it immediately.

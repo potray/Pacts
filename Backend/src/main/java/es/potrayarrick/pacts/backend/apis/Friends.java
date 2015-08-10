@@ -47,7 +47,7 @@ public class Friends {
             Key<User> receiverKey = Key.create(receiver);
 
             //Check if they are friends.
-            if (sender.isFriendOf(receiver)){
+            if (sender.isFriendOf(receiver)) {
                 return new Message(Message.ERROR_ALREADY_FRIENDS);
             }
 

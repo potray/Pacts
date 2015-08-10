@@ -33,10 +33,18 @@ public class ReceivedFriendRequestFragment extends Fragment {
      */
     private ArrayList<FriendRequest> mFriendRequests;
 
+    /**
+     * The fragment's interface to communicate with {@link MainActivity}.
+     */
     private OnFriendRequestFragmentInteractionListener mListener;
 
+    /**
+     * Use this factory method to create a new instance of this fragment using the provided parameters.
+     * @param friendRequests A list with the received friend requests.
+     * @return A new instance of fragment {@link ReceivedFriendRequestFragment}.
+     */
     @SuppressWarnings("unused")
-    static ReceivedFriendRequestFragment newIntance (ArrayList<FriendRequest> friendRequests){
+    static ReceivedFriendRequestFragment newInstance(final ArrayList<FriendRequest> friendRequests) {
         ReceivedFriendRequestFragment fragment = new ReceivedFriendRequestFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIEND_REQUESTS, friendRequests);
@@ -44,40 +52,60 @@ public class ReceivedFriendRequestFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Required empty public constructor.
+     */
     public ReceivedFriendRequestFragment() {
-        // Required empty public constructor
     }
 
+    /**
+     * An interface to communicate with {@link MainActivity}.
+     */
     public interface OnFriendRequestFragmentInteractionListener {
+        /**
+         * Tells {@link MainActivity} to accept a friend request.
+         */
         String ACCEPT_REQUEST = "accept";
+        /**
+         * Tells {@link MainActivity} to reject a friend request.
+         */
         String REJECT_REQUEST = "reject";
 
-        void onFriendRequestInteraction (FriendRequest request, String message);
+        /**
+         * Tells {@link MainActivity} to manage a friend request.
+         * @param request the friend request to manage.
+         * @param message either {@link #ACCEPT_REQUEST} or {@link #REJECT_REQUEST}.
+         */
+        void onFriendRequestInteraction(FriendRequest request, String message);
     }
 
-    public boolean checkRequestCount (){
+    /**
+     * Checks if {@link #mFriendRequests} is empty.
+     * @return true if {@link #mFriendRequests} is empty, false if not.
+     */
+    public final boolean checkRequestCount() {
         return mFriendRequests.isEmpty();
     }
 
     @Override
     @SuppressWarnings("unchecked") // This is for the casting warning.
-    public void onCreate(Bundle savedInstanceState) {
+    public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             mFriendRequests = (ArrayList<FriendRequest>) getArguments().getSerializable(ARG_FRIEND_REQUESTS);
         }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         // Inflate the view
         View view = inflater.inflate(R.layout.fragment_received_friend_requests, container, false);
 
         // Add back button to the action bar
         ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionbar != null){
+        if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
         }
         // UI elements
@@ -85,7 +113,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
 
         // Get friends name
         ArrayList<String> mFriendRequestSenderNames = new ArrayList<>();
-        for (FriendRequest request: mFriendRequests){
+        for (FriendRequest request: mFriendRequests) {
             mFriendRequestSenderNames.add(request.getSender().getName() + " " + request.getSender().getSurname());
         }
 
@@ -96,7 +124,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
         try {
@@ -108,50 +136,72 @@ public class ReceivedFriendRequestFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-    public void deleteRequest (FriendRequest request){
+    /**
+     * Deletes a friend request from {@link #mFriendRequests}.
+     * @param request the request to delete.
+     */
+    public final void deleteRequest(final FriendRequest request) {
         mFriendRequests.remove(request);
     }
 
 
-    private void onFriendRequestInteraction (FriendRequest request, String message){
-        if (mListener != null){
+    /**
+     * Tells {@link #mListener} to communicate with {@link MainActivity}.
+     * @param request a friend request to manage.
+     * @param message either {@link es.potrayarrick.pacts.ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener#ACCEPT_REQUEST}
+     *                or {@link es.potrayarrick.pacts.ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener#REJECT_REQUEST}.
+     */
+    private void onFriendRequestInteraction(final FriendRequest request, final String message) {
+        if (mListener != null) {
             mListener.onFriendRequestInteraction(request, message);
         }
     }
 
-
-    private class FriendRequestsArrayAdapter extends ArrayAdapter<String>{
+    /**
+     * An adapter for the friend request list.
+     */
+    private class FriendRequestsArrayAdapter extends ArrayAdapter<String> {
+        /**
+         * The names of the users who sent a request to this one.
+         */
         private final ArrayList<String> names;
 
-        public FriendRequestsArrayAdapter (Context context, ArrayList<String> names){
+        /**
+         * Default constructor.
+         * @param context the context of the view.
+         * @param names A list of names to populate {@link #names}
+         */
+        public FriendRequestsArrayAdapter(final Context context, final ArrayList<String> names) {
             super(context, R.layout.list_element_received_friend_request, names);
             this.names = new ArrayList<>(names);
 
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
             // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_element_received_friend_request, parent, false);
-            }
-
+            View view;
+                if (convertView == null) {
+                    view = LayoutInflater.from(getContext()).inflate(R.layout.list_element_received_friend_request, parent, false);
+                } else {
+                    view = convertView;
+                }
             // Populate the data
-            TextView senderNameView = (TextView) convertView.findViewById(R.id.request_sender_name);
+            TextView senderNameView = (TextView) view.findViewById(R.id.request_sender_name);
             senderNameView.setText(names.get(position));
 
             // Button callbacks
-            Button acceptRequestButton = (Button) convertView.findViewById(R.id.accept_button);
-            Button rejectRequestButton = (Button) convertView.findViewById(R.id.reject_button);
+            Button acceptRequestButton = (Button) view.findViewById(R.id.accept_button);
+            Button rejectRequestButton = (Button) view.findViewById(R.id.reject_button);
 
             acceptRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     FriendRequest request = mFriendRequests.get(position);
 
                     // Tell the main activity to send info to backend.
@@ -161,7 +211,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
 
             rejectRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     FriendRequest request = mFriendRequests.get(position);
 
                     // Tell the main activity to send info to backend.
@@ -169,7 +219,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
                 }
             });
 
-            return convertView;
+            return view;
 
         }
     }

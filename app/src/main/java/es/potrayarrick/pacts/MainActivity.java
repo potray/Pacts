@@ -14,6 +14,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -44,6 +45,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     @SuppressWarnings("unused")
     private static final String TAG = "MainActivity";
+
+    /**
+     * Logout drawer option (darn you CheckStyle and your magic number craziness...).
+     */
+    private static final int DRAWER_OPTION_LOGOUT = 3;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -53,7 +59,10 @@ public class MainActivity extends AppCompatActivity implements
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
+    /**
+     * Used to store previous fragment title.
+     */
+    private CharSequence mPreviousTitle;
     /**
      * The profile fragment.
      */
@@ -88,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * The user email.
      */
-
     private String mEmail;
 
     /**
@@ -149,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements
                 case 2:
                     mTitle = getString(R.string.title_section_friends);
                     break;
-                case 3:
+                case DRAWER_OPTION_LOGOUT:
                     // Show confirmation dialog
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.logout)
                             .setMessage(R.string.logout_confirmation)
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                public void onClick(final DialogInterface dialog, final int which) {
                                     logOut();
                                 }
                             })
@@ -195,12 +203,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onBackPressed() {
+    public final void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             this.finish();
         } else {
+            // We start using the drawer again.
             mNavigationDrawerFragment.toggleDrawerUse(true);
+            // Pop fragment and restore previous title.
             getFragmentManager().popBackStack();
+            mTitle = mPreviousTitle;
+            restoreActionBar();
         }
     }
 
@@ -215,9 +227,6 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_settings) {
             return true;
         }
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -233,7 +242,9 @@ public class MainActivity extends AppCompatActivity implements
                 // The fragment will have a back button instead of a drawer button.
                 mNavigationDrawerFragment.toggleDrawerUse(false);
                 // Change action bar title
+                mPreviousTitle = mTitle;
                 mTitle = getString(R.string.title_manage_friend_requests);
+                restoreActionBar();
                 // Show friend requests fragment, putting the current fragment in the back stack.
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
                         .addToBackStack(null).commit();
@@ -274,7 +285,10 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void logOut(){
+    /**
+     * User logout.
+     */
+    private void logOut() {
         // Delete user info
         SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
         SharedPreferences.Editor editor = preferences.edit();
@@ -326,10 +340,17 @@ public class MainActivity extends AppCompatActivity implements
                     friendsFragmentBundle.putSerializable(FriendsFragment.ARG_FRIENDS, friends);
                 }
 
-                if (friendRequestsItems != null){
-                    ArrayList<FriendRequest> requests = new ArrayList<>();
+                if (friendRequestsItems != null) {
+                    ArrayList<FriendRequest> requests = new ArrayList<>(friendRequestsItems);
+                    Log.d(TAG, "doInBackground - requests = " + requests.toString());
                     friendRequestsFragmentBundle.putSerializable(ReceivedFriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
-                    friendRequestsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, friendRequestsItems.isEmpty());
+
+                    // Sometimes friendRequestsItems = [{}], so request will be created, and it's first element
+                    // will be empty. We need to check for that.
+                    boolean emptyRequests = friendRequestsItems.isEmpty() || (requests.size() == 1 && requests.get(0).isEmpty());
+                    Log.d(TAG, "doInBackground  - emptyRequests = " + String.valueOf(emptyRequests));
+
+                    friendsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, emptyRequests);
                 } else {
                     // Hide the menu anyways
                     Log.d(TAG, "doInBackground: hiding friend request menu because friendRequestItems is null");
@@ -377,15 +398,31 @@ public class MainActivity extends AppCompatActivity implements
                     if (response.equals(ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)) {
                         // Add a new friend
                         mFriendsFragment.addFriend(request.getSender());
+                        return true;
                         // We don't need to reattach this fragment since we don't need to redraw it immediately.
+                    } else {
+                        return false;
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean requestAccepted) {
+            Toast toast;
+
+            if (requestAccepted != null) {
+                if (requestAccepted) {
+                    toast = Toast.makeText(getApplicationContext(), R.string.info_user_request_accepted, Toast.LENGTH_SHORT);
+                } else {
+                    toast = Toast.makeText(getApplicationContext(), R.string.info_user_request_rejected, Toast.LENGTH_SHORT);
+                }
+                toast.show();
+            }
         }
     }
 }

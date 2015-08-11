@@ -33,7 +33,7 @@ public class FriendsFragment extends Fragment {
     /**
      * A tag for debugging.
      */
-    private final String TAG = "FriendsFragment";
+    private static final String TAG = "FriendsFragment";
     /**
      * An argument name for {@link #newInstance(ArrayList, boolean)} <code>friends</code> parameter.
      */
@@ -118,6 +118,7 @@ public class FriendsFragment extends Fragment {
      * @param hide the new {@link #mHideFriendRequestsMenu}.
      */
     public final void setHideFriendRequestMenu(final boolean hide) {
+        Log.d(TAG, "setHideFriendRequestMenu  - " + String.valueOf(hide));
         mHideFriendRequestsMenu = hide;
     }
 
@@ -125,10 +126,15 @@ public class FriendsFragment extends Fragment {
     @SuppressWarnings("unchecked") // This is for the casting warning.
     public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mFriends = new ArrayList<>();
+        // Null checks.
         if (getArguments() != null) {
-            mFriends = (ArrayList<User>) getArguments().getSerializable(ARG_FRIENDS);
+            ArrayList<User> argFriendsList = (ArrayList<User>) getArguments().getSerializable(ARG_FRIENDS);
+            if (argFriendsList != null) {
+                mFriends.addAll(argFriendsList);
+            }
             mHideFriendRequestsMenu = getArguments().getBoolean(ARG_HIDE_REQUESTS_MENU);
+            Log.d(TAG, "onCreate  - mHideFriendRequestsMenu = " + String.valueOf(mHideFriendRequestsMenu));
         }
     }
 

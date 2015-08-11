@@ -78,30 +78,34 @@ public class Friends {
                                              @Named ("answer") final String answer) {
         //Get the request
         FriendRequest request = ofy().load().type(FriendRequest.class).id(requestId).now();
+        User receiver = request.getReceiver();
+        User sender = request.getSender();
 
         switch (answer) {
             case FriendRequest.ACCEPT_ANSWER:
-                //Add friends and delete the request.
-
-                User receiver = request.getReceiver();
-                User sender = request.getSender();
-
+                //Add friends.
                 receiver.addFriend(Key.create(sender));
                 sender.addFriend(Key.create(receiver));
 
-                ofy().save().entity(receiver);
-                ofy().save().entity(sender);
+
                 //TODO send a notification message to the sender.
                 break;
             case FriendRequest.REFUSE_ANSWER:
                 //TODO send a notification message to the sender.
-            break;
+                break;
             default:
                 break;
 
         }
-        //The request needs to be deleted.
+        // The request needs to be deleted.
+        Key<FriendRequest> requestKey = Key.create(request);
+        receiver.deleteReceivedFriendRequest(requestKey);
+        sender.deleteSentFriendRequest(requestKey);
         ofy().delete().entity(request);
+
+        // Save entities
+        ofy().save().entity(receiver);
+        ofy().save().entity(sender);
 
         return new Message(Message.SUCCESS);
     }

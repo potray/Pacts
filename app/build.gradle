@@ -9,8 +9,8 @@ android {
         applicationId "es.potrayarrick.pacts"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 3
-        versionName "Beta 2"
+        versionCode 4
+        versionName "Beta 3"
     }
     buildTypes {
         release {

@@ -144,6 +144,21 @@ public class User {
     }
 
     /**
+     * Deletes a sent friend request.
+     * @param request the key of the request to delete.
+     */
+    public final void deleteSentFriendRequest(final Key<FriendRequest> request) {
+        sentFriendRequests.remove(request);
+    }
+    /**
+     * Deletes a received friend request.
+     * @param request the key of the request to delete.
+     */
+    public final void deleteReceivedFriendRequest(final Key<FriendRequest> request) {
+        receivedFriendRequests.remove(request);
+    }
+
+    /**
      * Checks if an user is a friend of this.
      * @param user the user to check.
      * @return true if both users are friends.

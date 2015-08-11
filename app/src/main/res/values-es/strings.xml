@@ -37,4 +37,10 @@
     <string name="title_section_friends">Amigos</string>
     <string name="title_section_pacts">Pactos</string>
     <string name="title_section_profile">Perfil</string>
+    <string name="info_user_request_accepted">Solicitud aceptada</string>
+    <string name="info_user_request_rejected">Solicitud rechazada</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_confirmation">¿Realmente desea cerrar sesión?</string>
+    <string name="no">No</string>
+    <string name="yes">Si</string>
 </resources>

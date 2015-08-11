@@ -37,8 +37,8 @@
     <string name="error_already_friends">That user is already your friend</string>
     <string name="action_accept_friend_request">Accept</string>
     <string name="action_reject_friend_request">Reject</string>
-    <string name="info_user_request_accepted">Your request was accepted</string>
-    <string name="info_user_request_rejected">Your request was rejected</string>
+    <string name="info_user_request_accepted">The request was accepted</string>
+    <string name="info_user_request_rejected">The request was rejected</string>
 
     <!-- Profile -->
     <string name="placeholder_name_surname">Test Testing</string>

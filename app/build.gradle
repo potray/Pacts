@@ -10,7 +10,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 4
-        versionName "Beta 3"
+        versionName "Beta - Basic social network"
     }
     buildTypes {
         release {

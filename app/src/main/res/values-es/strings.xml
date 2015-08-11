@@ -5,7 +5,7 @@
     <string name="error_field_required">Este campo es obligatorio</string>
     <string name="error_incorrect_password">Contraseña incorrecta</string>
     <string name="error_invalid_email">Email no válido</string>
-    <string name="error_invalid_password">Contraseña muy corta.</string>
+    <string name="error_invalid_password">Contraseña muy corta</string>
     <string name="email">Email</string>
     <string name="password">Contraseña </string>
     <string name="action_register">Registrarse</string>
@@ -18,4 +18,23 @@
     <string name="repeat_password">Vuelva a introducir la contraseña</string>
     <string name="surname">Apellidos</string>
     <string name="title_activity_register">Registrar</string>
+    <string name="action_accept_friend_request">Aceptar</string>
+    <string name="action_add_friend">Añadir amigo</string>
+    <string name="action_example">Acción de ejemplo</string>
+    <string name="action_reject_friend_request">Rechazar</string>
+    <string name="action_view_friend_requests">Solicitudes de amistad</string>
+    <string name="error_already_friends">Ese usuario ya es tu amigo</string>
+    <string name="error_cannot_friend_yourself">No puedes ser tu propio amigo</string>
+    <string name="error_user_does_not_exist">El usuario no existe</string>
+    <string name="navigation_drawer_close">Cerrar drawer</string>
+    <string name="navigation_drawer_open">Abrir drawer</string>
+    <string name="placeholder_name_surname">Prueba Probando</string>
+    <string name="request_sent">Solicitud enviada</string>
+    <string name="send_request">Enviar solicitud de amistad</string>
+    <string name="title_activity_main">Pactos</string>
+    <string name="title_find_user_by_email">Añadir amigo</string>
+    <string name="title_manage_friend_requests">Solicitudes de amistad</string>
+    <string name="title_section_friends">Amigos</string>
+    <string name="title_section_pacts">Pactos</string>
+    <string name="title_section_profile">Perfil</string>
 </resources>

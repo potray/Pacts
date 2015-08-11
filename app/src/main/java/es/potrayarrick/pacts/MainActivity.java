@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import backend.pacts.potrayarrick.es.friends.Friends;
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
@@ -272,15 +274,27 @@ public class MainActivity extends AppCompatActivity implements
 
             try {
                 // Get user info (friends, requests...) and send them to the correct fragment.
-                ArrayList<User> friends = new ArrayList<>(mFriendsService.getUserFriends(mEmail).execute().getItems());
-                ArrayList<FriendRequest> requests = new ArrayList<>(mFriendsService.getUserFriendRequests(mEmail).execute().getItems());
 
                 Bundle friendsFragmentBundle = new Bundle();
                 Bundle friendRequestsFragmentBundle = new Bundle();
 
-                friendsFragmentBundle.putSerializable(FriendsFragment.ARG_FRIENDS, friends);
-                friendRequestsFragmentBundle.putSerializable(ReceivedFriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
-                friendRequestsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, requests.isEmpty());
+                Collection<User> friendsItems = mFriendsService.getUserFriends(mEmail).execute().getItems();
+                Collection<FriendRequest> friendRequestsItems = mFriendsService.getUserFriendRequests(mEmail).execute().getItems();
+
+                if (friendsItems != null) {
+                    ArrayList<User> friends = new ArrayList<>(friendsItems);
+                    friendsFragmentBundle.putSerializable(FriendsFragment.ARG_FRIENDS, friends);
+                }
+
+                if (friendRequestsItems != null){
+                    ArrayList<FriendRequest> requests = new ArrayList<>();
+                    friendRequestsFragmentBundle.putSerializable(ReceivedFriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
+                    friendRequestsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, friendRequestsItems.isEmpty());
+                } else {
+                    // Hide the menu anyways
+                    Log.d(TAG, "doInBackground: hiding friend request menu because friendRequestItems is null");
+                    friendsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, true);
+                }
 
                 mFriendsFragment.setArguments(friendsFragmentBundle);
                 mReceivedFriendRequestFragment.setArguments(friendRequestsFragmentBundle);

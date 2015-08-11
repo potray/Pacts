@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,10 @@ import backend.pacts.potrayarrick.es.friends.model.User;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
+    /**
+     * A tag for debugging.
+     */
+    private final String TAG = "FriendsFragment";
     /**
      * An argument name for {@link #newInstance(ArrayList, boolean)} <code>friends</code> parameter.
      */
@@ -141,8 +146,10 @@ public class FriendsFragment extends Fragment {
 
         // Get all mFriends names for the list.
         ArrayList<String> friendNames = new ArrayList<>();
-        for (User friend : mFriends) {
-            friendNames.add(friend.getName());
+        if (mFriends != null) {
+            for (User friend : mFriends) {
+                friendNames.add(friend.getName());
+            }
         }
 
         // Set adapter
@@ -186,6 +193,7 @@ public class FriendsFragment extends Fragment {
 
         // Hide friend requests menu if necessary.
         if (mHideFriendRequestsMenu) {
+            Log.d(TAG, "onCreateOptionsMenu: friend requests menu");
             menu.findItem(R.id.menu_friends_requests).setVisible(false);
         }
     }

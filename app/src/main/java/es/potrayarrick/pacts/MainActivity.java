@@ -1,5 +1,9 @@
 package es.potrayarrick.pacts;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -130,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements
     public final void onNavigationDrawerItemSelected(final int position) {
         // Update the main content by replacing fragments
         if (fragments != null) {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
+            if (position < fragments.size()) {
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
+            }
 
             //Update action bar title
             switch (position) {
@@ -142,6 +148,20 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 2:
                     mTitle = getString(R.string.title_section_friends);
+                    break;
+                case 3:
+                    // Show confirmation dialog
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.logout)
+                            .setMessage(R.string.logout_confirmation)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    logOut();
+                                }
+                            })
+                            .setNegativeButton(R.string.no, null)
+                            .show();
                     break;
                 default:
                     break;
@@ -210,7 +230,10 @@ public class MainActivity extends AppCompatActivity implements
     public final void onMenuClick(final String action) {
         switch (action) {
             case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
+                // The fragment will have a back button instead of a drawer button.
                 mNavigationDrawerFragment.toggleDrawerUse(false);
+                // Change action bar title
+                mTitle = getString(R.string.title_manage_friend_requests);
                 // Show friend requests fragment, putting the current fragment in the back stack.
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
                         .addToBackStack(null).commit();
@@ -249,6 +272,23 @@ public class MainActivity extends AppCompatActivity implements
 
             mFriendsService = builder.build();
         }
+    }
+
+    private void logOut(){
+        // Delete user info
+        SharedPreferences preferences = getSharedPreferences(Utils.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(Utils.Strings.USER_EMAIL);
+        editor.remove(Utils.Strings.USER_NAME);
+        editor.remove(Utils.Strings.USER_SURNAME);
+        editor.putBoolean(Utils.Strings.USER_LOGGED_IN, false);
+
+        editor.apply();
+
+        // Send user to login activity
+        finish();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
     /**

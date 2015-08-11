@@ -11,6 +11,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">Pacts</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="title_section_pacts">Pacts</string>
     <string name="title_section_profile">Profile</string>
@@ -38,5 +40,10 @@
 
     <!-- Profile -->
     <string name="placeholder_name_surname">Test Testing</string>
+
+    <!-- Log out -->
+    <string name="logout">Log out</string>
+    <string name="logout_confirmation">Do you really want to log out?</string>
+
 
 </resources>

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -24,7 +25,7 @@ import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
  */
 public class ReceivedFriendRequestFragment extends Fragment {
     /**
-     * An argument name for {@link #newIntance(ArrayList)} <code>friendRequests</code> parameter.
+     * An argument name for {@link #newInstance(ArrayList)} <code>friendRequests</code> parameter.
      */
     public static final String ARG_FRIEND_REQUESTS = "friend requests";
 
@@ -106,6 +107,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
         // Add back button to the action bar
         ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionbar != null) {
+            setHasOptionsMenu(true);
             actionbar.setDisplayHomeAsUpEnabled(true);
         }
         // UI elements
@@ -139,6 +141,17 @@ public class ReceivedFriendRequestFragment extends Fragment {
     public final void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

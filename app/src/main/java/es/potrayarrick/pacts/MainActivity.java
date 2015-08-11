@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,9 +78,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     private static Friends mFriendsService = null;
 
+
     /**
      * The user email.
      */
+
     private String mEmail;
 
     /**
@@ -151,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements
      * Restores the action bar, mainly for updating the title.
      */
     public final void restoreActionBar() {
-        Log.d(TAG, "restoreActionBar");
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
@@ -159,10 +159,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
     @Override
     public final boolean onCreateOptionsMenu(final Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
@@ -172,6 +170,16 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            mNavigationDrawerFragment.toggleDrawerUse(true);
+            getFragmentManager().popBackStack();
+        }
     }
 
     @Override
@@ -186,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
 
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -198,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements
     public final void onMenuClick(final String action) {
         switch (action) {
             case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
+                mNavigationDrawerFragment.toggleDrawerUse(false);
                 // Show friend requests fragment, putting the current fragment in the back stack.
                 getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
                         .addToBackStack(null).commit();

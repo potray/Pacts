@@ -1,11 +1,11 @@
 package es.potrayarrick.pacts.backend.models;
 
+import com.google.appengine.repackaged.com.google.common.base.Pair;
 import com.google.appengine.repackaged.org.joda.time.DateTime;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-import javafx.util.Pair;
 
 /**
  * The pact model.

@@ -23,7 +23,7 @@ import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 /**
  * A fragment for managing friend requests.
  */
-public class ReceivedFriendRequestFragment extends Fragment {
+public class FriendRequestFragment extends Fragment {
     /**
      * An argument name for {@link #newInstance(ArrayList)} <code>friendRequests</code> parameter.
      */
@@ -42,11 +42,11 @@ public class ReceivedFriendRequestFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of this fragment using the provided parameters.
      * @param friendRequests A list with the received friend requests.
-     * @return A new instance of fragment {@link ReceivedFriendRequestFragment}.
+     * @return A new instance of fragment {@link FriendRequestFragment}.
      */
     @SuppressWarnings("unused")
-    static ReceivedFriendRequestFragment newInstance(final ArrayList<FriendRequest> friendRequests) {
-        ReceivedFriendRequestFragment fragment = new ReceivedFriendRequestFragment();
+    static FriendRequestFragment newInstance(final ArrayList<FriendRequest> friendRequests) {
+        FriendRequestFragment fragment = new FriendRequestFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIEND_REQUESTS, friendRequests);
         fragment.setArguments(args);
@@ -56,7 +56,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
     /**
      * Required empty public constructor.
      */
-    public ReceivedFriendRequestFragment() {
+    public FriendRequestFragment() {
     }
 
     /**
@@ -102,7 +102,7 @@ public class ReceivedFriendRequestFragment extends Fragment {
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         // Inflate the view
-        View view = inflater.inflate(R.layout.fragment_received_friend_requests, container, false);
+        View view = inflater.inflate(R.layout.fragment_friend_requests, container, false);
 
         // Add back button to the action bar
         ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -166,8 +166,8 @@ public class ReceivedFriendRequestFragment extends Fragment {
     /**
      * Tells {@link #mListener} to communicate with {@link MainActivity}.
      * @param request a friend request to manage.
-     * @param message either {@link es.potrayarrick.pacts.ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener#ACCEPT_REQUEST}
-     *                or {@link es.potrayarrick.pacts.ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener#REJECT_REQUEST}.
+     * @param message either {@link FriendRequestFragment.OnFriendRequestFragmentInteractionListener#ACCEPT_REQUEST}
+     *                or {@link FriendRequestFragment.OnFriendRequestFragmentInteractionListener#REJECT_REQUEST}.
      */
     private void onFriendRequestInteraction(final FriendRequest request, final String message) {
         if (mListener != null) {

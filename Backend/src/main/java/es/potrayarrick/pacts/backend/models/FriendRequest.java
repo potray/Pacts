@@ -7,7 +7,7 @@ import com.googlecode.objectify.annotation.Id;
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 /**
- * This class manages friend requests.
+ * The friend request model.
  */
 @Entity
 public class FriendRequest {

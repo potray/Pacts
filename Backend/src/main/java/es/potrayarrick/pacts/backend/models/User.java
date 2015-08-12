@@ -53,6 +53,23 @@ public class User {
     private ArrayList<Key<FriendRequest>> receivedFriendRequests = new ArrayList<>();
 
     /**
+     * The user's pacts.
+     */
+    private ArrayList<Key<Pact>> pacts = new ArrayList<>();
+
+    /**
+     * The pact requests the user has sent.
+     */
+    private ArrayList<Key<PactRequest>> sentPactRequests = new ArrayList<>();
+
+    /**
+     * The pact requests the user has received.
+     */
+    private ArrayList<Key<PactRequest>> receivedPactRequests = new ArrayList<>();
+
+
+
+    /**
      * The pact types the user has used.
      */
     private ArrayList<Key<PactType>> usedPactTypes = new ArrayList<>();
@@ -195,18 +212,74 @@ public class User {
     public final ArrayList<FriendRequest> getPendingFriendRequests() {
         ArrayList<FriendRequest> pendingRequests = new ArrayList<>();
 
-        for (Key<FriendRequest> key:receivedFriendRequests) {
+        for (Key<FriendRequest> key : receivedFriendRequests) {
             pendingRequests.add(ofy().load().key(key).now());
         }
 
         return pendingRequests;
     }
 
+    public final ArrayList<PactRequest> getReceivedPactRequests() {
+        ArrayList<PactRequest> requests = new ArrayList<>();
+
+        for (Key<PactRequest> key : receivedPactRequests) {
+            requests.add(ofy().load().key(key).now());
+        }
+
+        return requests;
+    }
+
+    public final ArrayList<Pact> getPacts() {
+        ArrayList<Pact> pacts = new ArrayList<>();
+
+        for (Key<Pact> key : this.pacts){
+            pacts.add(ofy().load().key(key).now());
+        }
+
+        return pacts;
+    }
+
     /**
      * Adds a new pact type to the list.
      * @param type the type to add.
      */
-    public final void addPactType (PactType type){
-        usedPactTypes.add(Key.create(type));
+    public final void addPactType (PactType type) {
+        Key<PactType> typeKey = Key.create(type);
+
+        if (!usedPactTypes.contains(typeKey)) {
+            usedPactTypes.add(typeKey);
+        }
+    }
+
+    /**
+     * Adds a new pact request to the sent ones.
+     * @param request the request to add.
+     */
+    public final void sendPactRequest (PactRequest request) {
+        sentPactRequests.add(Key.create(request));
+    }
+
+    /**
+     * Adds a new pact request to the received ones.
+     * @param request the request to add.
+     */
+    public final void receivePactRequest (PactRequest request) {
+        receivedPactRequests.add(Key.create(request));
+    }
+
+    /**
+     * Deletes a sent pact requests.
+     * @param request the request to delete.
+     */
+    public final void deleteSentPactRequest (PactRequest request) {
+        sentPactRequests.remove(Key.create(request));
+    }
+
+    /**
+     * Deletes a received pact request.
+     * @param request the request to delete.
+     */
+    public final void deleteReceivedPactRequest (PactRequest request) {
+        receivedPactRequests.remove(Key.create(request));
     }
 }

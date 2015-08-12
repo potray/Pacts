@@ -95,6 +95,12 @@ public class FriendsFragment extends Fragment {
          * @param action the action to do.
          */
         void onMenuClick(String action);
+
+        /**
+         * Tells {@link MainActivity} to show the friend fragment.
+         * @param friend the friend with the info to populate the fragment.
+         */
+        void onFriendClick (User friend);
     }
 
     /**
@@ -167,7 +173,7 @@ public class FriendsFragment extends Fragment {
 
             @Override
             public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-                // TODO launch friend fragment.
+                mListener.onFriendClick(mFriends.get(position));
             }
 
         });

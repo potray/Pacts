@@ -26,6 +26,8 @@
     <!-- Menus -->
     <string name="action_add_friend">Add friend</string>
     <string name="action_view_friend_requests">Friend requests</string>
+    <string name="action_create_pact">Create pact</string>
+    <string name="action_view_pact_requests">Pact requests</string>
 
     <!-- Friends -->
     <string name="title_find_user_by_email">Add new friend</string>
@@ -46,6 +48,9 @@
     <!-- Log out -->
     <string name="logout">Log out</string>
     <string name="logout_confirmation">Do you really want to log out?</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

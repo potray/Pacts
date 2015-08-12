@@ -15,7 +15,7 @@ import es.potrayarrick.pacts.backend.models.User;
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 /**
- * A class for user login.
+ * The API for user login.
  */
 
 @Api(name = "login",

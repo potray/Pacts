@@ -17,7 +17,7 @@ import es.potrayarrick.pacts.backend.models.User;
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 /**
- * A class for user registration.
+ * The API for user registration.
  */
 
 @Api(name = "register",

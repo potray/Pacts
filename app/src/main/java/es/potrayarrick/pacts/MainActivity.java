@@ -24,6 +24,7 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import backend.pacts.potrayarrick.es.friends.Friends;
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
@@ -37,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         ProfileFragment.OnFragmentInteractionListener,
         FriendsFragment.OnFriendsFragmentInteractionListener,
-        PactsFragment.OnFragmentInteractionListener,
-        ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener {
+        PactsFragment.OnPactsFragmentInteractionListener,
+        FriendRequestFragment.OnFriendRequestFragmentInteractionListener,
+        FriendFragment.OnFriendFragmentInteractionListener{
 
     /**
      * A debugging tag.
@@ -75,10 +77,15 @@ public class MainActivity extends AppCompatActivity implements
      * The friends fragment.
      */
     private FriendsFragment mFriendsFragment;
+
+    /**
+     * The friend fragment.
+     */
+    private FriendFragment mFriendFragment;
     /**
      * The received friend requests fragment.
      */
-    private ReceivedFriendRequestFragment mReceivedFriendRequestFragment;
+    private FriendRequestFragment mFriendRequestFragment;
 
     /**
      * The task for retrieving user info from backend.
@@ -102,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * A list of fragment that are managed by the drawer.
      */
-    private ArrayList<android.app.Fragment> fragments;
+    private ArrayList<android.app.Fragment> mDrawerHandledFragments;
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
@@ -113,18 +120,19 @@ public class MainActivity extends AppCompatActivity implements
         mProfileFragment = new ProfileFragment();
         mPactsFragment = new PactsFragment();
         mFriendsFragment = new FriendsFragment();
-        mReceivedFriendRequestFragment = new ReceivedFriendRequestFragment();
+        mFriendFragment = new FriendFragment();
+        mFriendRequestFragment = new FriendRequestFragment();
 
-        fragments = new ArrayList<>();
-        fragments.add(mPactsFragment);
-        fragments.add(mProfileFragment);
-        fragments.add(mFriendsFragment);
+        mDrawerHandledFragments = new ArrayList<>();
+        mDrawerHandledFragments.add(mPactsFragment);
+        mDrawerHandledFragments.add(mProfileFragment);
+        mDrawerHandledFragments.add(mFriendsFragment);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)  getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         //Load the pacts fragment
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(0)).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -141,9 +149,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public final void onNavigationDrawerItemSelected(final int position) {
         // Update the main content by replacing fragments
-        if (fragments != null) {
-            if (position < fragments.size()) {
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragments.get(position)).commit();
+        if (mDrawerHandledFragments != null) {
+            if (position < mDrawerHandledFragments.size()) {
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(position)).commit();
             }
 
             //Update action bar title
@@ -239,19 +247,31 @@ public class MainActivity extends AppCompatActivity implements
     public final void onMenuClick(final String action) {
         switch (action) {
             case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
-                // The fragment will have a back button instead of a drawer button.
-                mNavigationDrawerFragment.toggleDrawerUse(false);
-                // Change action bar title
-                mPreviousTitle = mTitle;
-                mTitle = getString(R.string.title_manage_friend_requests);
-                restoreActionBar();
+                hideDrawer(getString(R.string.title_manage_friend_requests));
                 // Show friend requests fragment, putting the current fragment in the back stack.
-                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mReceivedFriendRequestFragment)
+                getFragmentManager().beginTransaction().replace(R.id.fragment_container, mFriendRequestFragment)
                         .addToBackStack(null).commit();
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onFriendClick(User friend) {
+        // Set the friend fragment arguments
+        Bundle friendFragmentArguments = new Bundle();
+        HashMap<String, String> friendInfo = new HashMap<>();
+        friendInfo.put(Utils.Strings.USER_NAME, friend.getName());
+        friendInfo.put(Utils.Strings.USER_SURNAME, friend.getSurname());
+        friendFragmentArguments.putSerializable(FriendFragment.ARG_FRIEND_INFO, friendInfo);
+
+        // TODO add pacts.
+        mFriendFragment.setArguments(friendFragmentArguments);
+
+        // Show the friend fragment
+        hideDrawer(friend.getName());
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mFriendFragment).addToBackStack(null).commit();
     }
 
     @Override
@@ -306,6 +326,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
+     * Hides the drawer, shows the back button and shows a new title.
+     * @param newMenuTitle the new title to show.
+     */
+    public final void hideDrawer (String newMenuTitle){
+        // The fragment will have a back button instead of a drawer button.
+        mNavigationDrawerFragment.toggleDrawerUse(false);
+        // Change action bar title
+        mPreviousTitle = mTitle;
+        mTitle = newMenuTitle;
+        restoreActionBar();
+    }
+
+    /**
      * A task to get the user info.
      */
     private final class UserInfoTask extends AsyncTask<Void, Void, Boolean> {
@@ -343,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (friendRequestsItems != null) {
                     ArrayList<FriendRequest> requests = new ArrayList<>(friendRequestsItems);
                     Log.d(TAG, "doInBackground - requests = " + requests.toString());
-                    friendRequestsFragmentBundle.putSerializable(ReceivedFriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
+                    friendRequestsFragmentBundle.putSerializable(FriendRequestFragment.ARG_FRIEND_REQUESTS, requests);
 
                     // Sometimes friendRequestsItems = [{}], so request will be created, and it's first element
                     // will be empty. We need to check for that.
@@ -358,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 mFriendsFragment.setArguments(friendsFragmentBundle);
-                mReceivedFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
+                mFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
 
                 return true;
             } catch (IOException e) {
@@ -384,18 +417,18 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (message.getSuccess()) {
                     // Delete the request.
-                    mReceivedFriendRequestFragment.deleteRequest(request);
+                    mFriendRequestFragment.deleteRequest(request);
 
                     // Check if friends fragment should hide requests fragment.
-                    mFriendsFragment.setHideFriendRequestMenu(mReceivedFriendRequestFragment.checkRequestCount());
+                    mFriendsFragment.setHideFriendRequestMenu(mFriendRequestFragment.checkRequestCount());
 
                     // We need to reattach the received friend requests fragment to update it.
                     getFragmentManager().beginTransaction()
-                            .detach(mReceivedFriendRequestFragment)
-                            .attach(mReceivedFriendRequestFragment)
+                            .detach(mFriendRequestFragment)
+                            .attach(mFriendRequestFragment)
                             .commit();
 
-                    if (response.equals(ReceivedFriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)) {
+                    if (response.equals(FriendRequestFragment.OnFriendRequestFragmentInteractionListener.ACCEPT_REQUEST)) {
                         // Add a new friend
                         mFriendsFragment.addFriend(request.getSender());
                         return true;

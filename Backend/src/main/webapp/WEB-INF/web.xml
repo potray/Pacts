@@ -8,7 +8,8 @@
             <param-value>
                 es.potrayarrick.pacts.backend.apis.Login,
                 es.potrayarrick.pacts.backend.apis.Register,
-                es.potrayarrick.pacts.backend.apis.Friends
+                es.potrayarrick.pacts.backend.apis.Friends,
+                es.potrayarrick.pacts.backend.apis.Pacts
             </param-value>
         </init-param>
     </servlet>

@@ -19,7 +19,7 @@ public final class OfyService {
     /**
      * For debugging.
      */
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     /**
      * Private constructor so this class can't be instanced.

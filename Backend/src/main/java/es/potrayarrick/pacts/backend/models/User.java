@@ -53,6 +53,11 @@ public class User {
     private ArrayList<Key<FriendRequest>> receivedFriendRequests = new ArrayList<>();
 
     /**
+     * The pact types the user has used.
+     */
+    private ArrayList<Key<PactType>> usedPactTypes = new ArrayList<>();
+
+    /**
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
@@ -195,5 +200,13 @@ public class User {
         }
 
         return pendingRequests;
+    }
+
+    /**
+     * Adds a new pact type to the list.
+     * @param type the type to add.
+     */
+    public final void addPactType (PactType type){
+        usedPactTypes.add(Key.create(type));
     }
 }

@@ -8,6 +8,7 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class PactType {
+
     /**
      * The type.
      */
@@ -27,5 +28,10 @@ public class PactType {
     public PactType(final String type) {
         // We don't want blood, Blood, BLOOD, BlOoD and bLoOd in the database.
         this.type = type.toLowerCase();
+    }
+
+
+    public String getType() {
+        return type;
     }
 }

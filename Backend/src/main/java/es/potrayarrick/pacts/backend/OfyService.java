@@ -10,6 +10,9 @@ import java.security.spec.InvalidKeySpecException;
 
 import es.potrayarrick.pacts.backend.Utils.PasswordHash;
 import es.potrayarrick.pacts.backend.models.FriendRequest;
+import es.potrayarrick.pacts.backend.models.Pact;
+import es.potrayarrick.pacts.backend.models.PactRequest;
+import es.potrayarrick.pacts.backend.models.PactType;
 import es.potrayarrick.pacts.backend.models.User;
 
 /**
@@ -29,6 +32,9 @@ public final class OfyService {
     static {
         factory().register(User.class);
         factory().register(FriendRequest.class);
+        factory().register(Pact.class);
+        factory().register(PactType.class);
+        factory().register(PactRequest.class);
         //If I'm debugging populate the database with testing entities. Since this only executes
         //once I do it here.
         if (DEBUG) {

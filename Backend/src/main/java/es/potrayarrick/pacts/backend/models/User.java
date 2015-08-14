@@ -67,8 +67,6 @@ public class User {
      */
     private ArrayList<Key<PactRequest>> receivedPactRequests = new ArrayList<>();
 
-
-
     /**
      * The pact types the user has used.
      */
@@ -249,6 +247,14 @@ public class User {
         if (!usedPactTypes.contains(typeKey)) {
             usedPactTypes.add(typeKey);
         }
+    }
+
+    public ArrayList<PactType> getPactTypes () {
+        ArrayList<PactType> types = new ArrayList<>();
+        for (Key<PactType> key : usedPactTypes){
+            types.add(ofy().load().key(key).now());
+        }
+        return types;
     }
 
     /**

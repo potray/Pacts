@@ -13,6 +13,9 @@
     <string name="title_activity_main">Pacts</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="type">Type</string>
+    <string name="create">Create</string>
+
 
     <string name="title_section_pacts">Pacts</string>
     <string name="title_section_profile">Profile</string>
@@ -28,6 +31,7 @@
     <string name="action_view_friend_requests">Friend requests</string>
     <string name="action_create_pact">Create pact</string>
     <string name="action_view_pact_requests">Pact requests</string>
+
 
     <!-- Friends -->
     <string name="title_find_user_by_email">Add new friend</string>
@@ -49,8 +53,14 @@
     <string name="logout">Log out</string>
     <string name="logout_confirmation">Do you really want to log out?</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Pacts -->
+    <string name="pact_name">Name</string>
+    <string name="pact_description">Description</string>
+    <string name="action_create_pact_type">Create type</string>
+    <string name="pact_is_promise">Is this a promise?</string>
+    <string name="create_pact_type">Create type</string>
+    <string name="select_pact_type">Select type</string>
+    <string name="info_pact_type_created">The pact type was created</string>
 
 
 </resources>

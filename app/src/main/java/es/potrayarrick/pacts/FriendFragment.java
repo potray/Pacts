@@ -2,11 +2,12 @@ package es.potrayarrick.pacts;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class FriendFragment extends Fragment {
      * @param pacts the pacts the user has with {@link #friend}
      * @return A new instance of fragment FriendFragment.
      */
+    @SuppressWarnings("unused")
     public static FriendFragment newInstance(HashMap<String, String> friendInfo, ArrayList<Pact> pacts) {
         FriendFragment fragment = new FriendFragment();
         Bundle args = new Bundle();
@@ -86,10 +88,9 @@ public class FriendFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onCreatePactPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onCreatePactMenuPressed(friend.getEmail());
         }
     }
 
@@ -111,11 +112,22 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
+    public final void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // Clear previous menu
+        menu.clear();
+        // Swap menu bars.
+        inflater.inflate(R.menu.menu_friend, menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
+            case R.id.menu_create_pact:
+                onCreatePactPressed();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -133,8 +145,7 @@ public class FriendFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFriendFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onCreatePactMenuPressed(String senderEmail);
     }
 
 }

@@ -97,4 +97,28 @@ public class Pacts {
         return user.getPacts();
     }
 
+    @ApiMethod (name = "createPactType")
+    public final void createPactType (@Named ("email") final String email,
+                                      @Named ("type") final String newType){
+        // Get user and type.
+        User user = ofy().load().type(User.class).id(email).now();
+        PactType type = ofy().load().type(PactType.class).id(newType).now();
+
+        // Create the type if necessary.
+        if (type == null) {
+            type = new PactType(newType);
+            ofy().save().entity(type).now();
+        }
+
+        user.addPactType(type);
+        ofy().save().entity(user).now();
+    }
+
+    @ApiMethod (name = "getUserPactTypes")
+    public final ArrayList<PactType> getUserPactTypes (@Named ("email") final String email) {
+        // Get user
+        User user = ofy().load().type(User.class).id(email).now();
+
+        return user.getPactTypes();
+    }
 }

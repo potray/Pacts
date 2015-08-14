@@ -30,6 +30,9 @@ import backend.pacts.potrayarrick.es.friends.Friends;
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 import backend.pacts.potrayarrick.es.friends.model.Message;
 import backend.pacts.potrayarrick.es.friends.model.User;
+import backend.pacts.potrayarrick.es.pacts.Pacts;
+import backend.pacts.potrayarrick.es.pacts.model.PactType;
+import es.potrayarrick.pacts.CreatePactFragment.OnCreatePactInteractionListener;
 
 /**
  * The main activity of the app.
@@ -40,7 +43,9 @@ public class MainActivity extends AppCompatActivity implements
         FriendsFragment.OnFriendsFragmentInteractionListener,
         PactsFragment.OnPactsFragmentInteractionListener,
         FriendRequestFragment.OnFriendRequestFragmentInteractionListener,
-        FriendFragment.OnFriendFragmentInteractionListener{
+        FriendFragment.OnFriendFragmentInteractionListener,
+        OnCreatePactInteractionListener,
+        CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener{
 
     /**
      * A debugging tag.
@@ -77,11 +82,15 @@ public class MainActivity extends AppCompatActivity implements
      * The friends fragment.
      */
     private FriendsFragment mFriendsFragment;
-
     /**
      * The friend fragment.
      */
     private FriendFragment mFriendFragment;
+
+    /**
+     * The create pact fragment.
+     */
+    private CreatePactFragment mCreatePactFragment;
     /**
      * The received friend requests fragment.
      */
@@ -99,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements
      * The friends backend service.
      */
     private static Friends mFriendsService = null;
+    /**
+     * The pacts backend service
+     */
+    private static Pacts mPactsService = null;
 
 
     /**
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements
         mFriendsFragment = new FriendsFragment();
         mFriendFragment = new FriendFragment();
         mFriendRequestFragment = new FriendRequestFragment();
+        mCreatePactFragment = new CreatePactFragment();
 
         mDrawerHandledFragments = new ArrayList<>();
         mDrawerHandledFragments.add(mPactsFragment);
@@ -259,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onFriendClick(User friend) {
-        // Set the friend fragment arguments
+        // Set the friend fragment arguments.
         Bundle friendFragmentArguments = new Bundle();
         HashMap<String, String> friendInfo = new HashMap<>();
         friendInfo.put(Utils.Strings.USER_NAME, friend.getName());
@@ -269,14 +283,42 @@ public class MainActivity extends AppCompatActivity implements
         // TODO add pacts.
         mFriendFragment.setArguments(friendFragmentArguments);
 
-        // Show the friend fragment
+        // Show the friend fragment.
         hideDrawer(friend.getName());
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, mFriendFragment).addToBackStack(null).commit();
     }
 
+
+
+    @Override
+    public void onCreatePactMenuPressed(String receiverEmail) {
+        // Set fragment arguments.
+        Bundle arguments = mCreatePactFragment.getArguments();
+        arguments.putString(CreatePactFragment.ARG_RECEIVER_EMAIL, receiverEmail);
+        arguments.putString(CreatePactFragment.ARG_SENDER_EMAIL, mEmail);
+        mCreatePactFragment.setArguments(arguments);
+
+        // Show the create pact fragment.
+        hideDrawer(getString(R.string.action_create_pact));
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mCreatePactFragment).addToBackStack(null).commit();
+    }
+
+
     @Override
     public final void onFriendRequestInteraction(final FriendRequest request, final String message) {
         mManageFriendRequestTask.execute(new Pair<>(request, message));
+    }
+
+    @Override
+    public void onCreatePactPressed() {
+
+    }
+
+
+
+    @Override
+    public void onCreatePactType(String type) {
+        mCreatePactFragment.addPactType(type);
     }
 
     /**
@@ -304,6 +346,30 @@ public class MainActivity extends AppCompatActivity implements
             mFriendsService = builder.build();
         }
     }
+
+    private void setUpPactsService() {
+        if (mPactsService == null) {   // Only do this once
+            Pacts.Builder builder;
+            if (Utils.LOCAL_TESTING) {
+                builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+            } else {
+                builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+            }
+
+            mPactsService = builder.build();
+        }
+    }
+
 
     /**
      * User logout.
@@ -348,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements
         private final String mEmail;
 
         /**
-         * Deffault constructor.
+         * Default constructor.
          * @param mEmail the email of the user.
          */
         private UserInfoTask(final String mEmail) {
@@ -358,15 +424,18 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected Boolean doInBackground(final Void... params) {
             setUpFriendService();
+            setUpPactsService();
 
             try {
-                // Get user info (friends, requests...) and send them to the correct fragment.
+                // Get user info (friends, requests, pact types...) and send them to the correct fragment.
 
                 Bundle friendsFragmentBundle = new Bundle();
                 Bundle friendRequestsFragmentBundle = new Bundle();
+                Bundle createPactFragmentBundle = new Bundle();
 
                 Collection<User> friendsItems = mFriendsService.getUserFriends(mEmail).execute().getItems();
                 Collection<FriendRequest> friendRequestsItems = mFriendsService.getUserFriendRequests(mEmail).execute().getItems();
+                Collection<PactType> pactTypesItems = mPactsService.getUserPactTypes(mEmail).execute().getItems();
 
                 if (friendsItems != null) {
                     ArrayList<User> friends = new ArrayList<>(friendsItems);
@@ -390,8 +459,22 @@ public class MainActivity extends AppCompatActivity implements
                     friendsFragmentBundle.putBoolean(FriendsFragment.ARG_HIDE_REQUESTS_MENU, true);
                 }
 
+                if (pactTypesItems != null) {
+                    // We need an ArrayList<String> instead of an ArrayList<PactType>
+                    ArrayList<String> pactTypes = new ArrayList<>();
+                    Log.d(TAG, "doInBackground - pactTypesItems = " + pactTypesItems.toString());
+
+                    for (PactType type : pactTypesItems){
+                        pactTypes.add(type.getType());
+                    }
+                    createPactFragmentBundle.putSerializable(CreatePactFragment.ARG_PACT_TYPES, pactTypes);
+                }
+
                 mFriendsFragment.setArguments(friendsFragmentBundle);
                 mFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
+                mCreatePactFragment.setArguments(createPactFragmentBundle);
+
+
 
                 return true;
             } catch (IOException e) {

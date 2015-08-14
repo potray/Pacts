@@ -2,14 +2,12 @@ package es.potrayarrick.pacts.backend.models;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
 
 /**
  * The pact request model.
  */
 @Entity
 public class PactRequest extends FriendRequest{
-    @Id
     private Key<Pact> pact;
 
     /**

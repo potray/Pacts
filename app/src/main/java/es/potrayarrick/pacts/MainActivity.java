@@ -278,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements
         HashMap<String, String> friendInfo = new HashMap<>();
         friendInfo.put(Utils.Strings.USER_NAME, friend.getName());
         friendInfo.put(Utils.Strings.USER_SURNAME, friend.getSurname());
+        friendInfo.put(Utils.Strings.USER_EMAIL, friend.getEmail());
         friendFragmentArguments.putSerializable(FriendFragment.ARG_FRIEND_INFO, friendInfo);
 
         // TODO add pacts.
@@ -347,30 +348,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void setUpPactsService() {
-        if (mPactsService == null) {   // Only do this once
-            Pacts.Builder builder;
-            if (Utils.LOCAL_TESTING) {
-                builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-            } else {
-                builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
-            }
-
-            mPactsService = builder.build();
-        }
-    }
-
-
     /**
      * User logout.
      */
@@ -424,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected Boolean doInBackground(final Void... params) {
             setUpFriendService();
-            setUpPactsService();
+            mPactsService = Utils.setUpPactsService();
 
             try {
                 // Get user info (friends, requests, pact types...) and send them to the correct fragment.

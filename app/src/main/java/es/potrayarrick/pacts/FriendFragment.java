@@ -68,6 +68,7 @@ public class FriendFragment extends Fragment {
                 friend = new User();
                 friend.setName(friendInfo.get(Utils.Strings.USER_NAME));
                 friend.setSurname(friendInfo.get(Utils.Strings.USER_SURNAME));
+                friend.setEmail(friendInfo.get(Utils.Strings.USER_EMAIL));
             }
         }
     }

@@ -61,6 +61,7 @@
     <string name="create_pact_type">Create type</string>
     <string name="select_pact_type">Select type</string>
     <string name="info_pact_type_created">The pact type was created</string>
+    <string name="info_pact_created">The pact was created</string>
 
 
 </resources>

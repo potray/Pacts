@@ -1,5 +1,14 @@
 package es.potrayarrick.pacts;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
+import java.io.IOException;
+
+import backend.pacts.potrayarrick.es.pacts.Pacts;
+
 /**
  * A class with several utilities.
  */
@@ -74,5 +83,25 @@ public final class Utils {
          * Private constructor to prevent instances.
          */
         private Strings() { }
+    }
+
+    public static Pacts setUpPactsService() {
+        Pacts.Builder builder;
+        if (Utils.LOCAL_TESTING) {
+            builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
+                    new AndroidJsonFactory(), null)
+                    // - 10.0.2.2 is localhost's IP address in Android emulator
+                    .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                    .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                        @Override
+                        public void initialize(final AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                            abstractGoogleClientRequest.setDisableGZipContent(true);
+                        }
+                    });
+        } else {
+            builder = new Pacts.Builder(AndroidHttp.newCompatibleTransport(),
+                    new AndroidJsonFactory(), null).setRootUrl("https://pacts-1027.appspot.com/_ah/api/");
+        }
+        return builder.build();
     }
 }

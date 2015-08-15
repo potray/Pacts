@@ -2,31 +2,42 @@ package es.potrayarrick.pacts;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import backend.pacts.potrayarrick.es.pacts.Pacts;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnCreatePactInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CreatePactFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment for creating a pact.
  */
 public class CreatePactFragment extends Fragment {
+    /**
+     * Debug tag.
+     */
     private static final String TAG = "CreatePactFrag";
 
+
+    /**
+     * An argument name for {@link #newInstance(String, String, ArrayList)} <code>senderEmail</code> parameter.
+     */
     public static final String ARG_SENDER_EMAIL = "sender email";
     public static final String ARG_RECEIVER_EMAIL = "receiver email";
     public static final String ARG_PACT_TYPES = "pact types";
@@ -37,9 +48,11 @@ public class CreatePactFragment extends Fragment {
 
     private Spinner mPactTypesSpinner;
 
-    private String type;
+    private String mPactType;
 
     private CreatePactTypeDialogFragment mCreatePactTypeDialogFragment;
+
+    private Pacts mPactsService;
 
     private OnCreatePactInteractionListener mListener;
 
@@ -69,6 +82,7 @@ public class CreatePactFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPactsService = null;
         mCreatePactTypeDialogFragment = new CreatePactTypeDialogFragment();
         if (getArguments() != null) {
             mSenderEmail = getArguments().getString(ARG_SENDER_EMAIL);
@@ -94,36 +108,79 @@ public class CreatePactFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_create_pact, container, false);
 
         // UI elements
-        EditText pactName = (EditText) view.findViewById(R.id.pact_name);
-        EditText pactDescription = (EditText) view.findViewById(R.id.pact_description);
-        CheckBox isPromiseCheckbox = (CheckBox) view.findViewById(R.id.pact_is_promise);
+        final EditText pactName = (EditText) view.findViewById(R.id.pact_name);
+        final EditText pactDescription = (EditText) view.findViewById(R.id.pact_description);
+        final TextView pactTypeHint = (TextView) view.findViewById(R.id.pact_type_hint);
+        final CheckBox isPromiseCheckbox = (CheckBox) view.findViewById(R.id.pact_is_promise);
+        Button createPactButton = (Button) view.findViewById(R.id.create_pact_button);
+        Button createPactTypeButton = (Button) view.findViewById(R.id.create_pact_type_button);
         mPactTypesSpinner= (Spinner) view.findViewById(R.id.pact_type);
 
-        String name;
-        String description;
-        boolean isPromise;
+        // The AsyncTask
+        final CreatePactAsyncTask createPactTask = new CreatePactAsyncTask(getActivity().getApplicationContext());
 
         // Populate the spinner
-        mPactTypes.add(getString(R.string.create_pact_type));
-
         setSpinnerAdapter();
-
 
         mPactTypesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemSelected - mPactTypes.size = " + mPactTypes.size());
-                if (position == mPactTypes.size() - 1 || mPactTypes.size() == 1) {
-                    mCreatePactTypeDialogFragment.show(getFragmentManager(), null);
-                } else {
-                    type = mPactTypes.get(position);
-                    Log.d(TAG, "onItemClick - type = " + type);
-                }
+                mPactType = mPactTypes.get(position);
+                Log.d(TAG, "onItemClick - type = " + mPactType);
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                Log.d(TAG, "onNothingSelected ");
+            }
+        });
 
+        // Create pact type callback
+        createPactTypeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCreatePactTypeDialogFragment.show(getFragmentManager(), null);
+            }
+        });
+
+
+        // Set the checkbox so it hides the pact type when selected.
+        isPromiseCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPromiseCheckbox.isChecked()){
+                    pactTypeHint.setVisibility(View.INVISIBLE);
+                    mPactTypesSpinner.setVisibility(View.INVISIBLE);
+                } else {
+                    pactTypeHint.setVisibility(View.VISIBLE);
+                    mPactTypesSpinner.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        // Create pact button callback
+        createPactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO check valid inputs.
+                // Get values from input text and checkbox.
+
+                String name, description;
+                boolean isPromise;
+
+                name = pactName.getText().toString();
+                description = pactDescription.getText().toString();
+                isPromise = isPromiseCheckbox.isChecked();
+
+                // Launch the task.
+                ArrayList<String> taskStringArguments = new ArrayList<>();
+                taskStringArguments.add(mSenderEmail);
+                taskStringArguments.add(mReceiverEmail);
+                taskStringArguments.add(name);
+                taskStringArguments.add(description);
+                taskStringArguments.add(mPactType);
+                createPactTask.execute(new Pair<>(taskStringArguments, isPromise));
             }
         });
 
@@ -150,13 +207,11 @@ public class CreatePactFragment extends Fragment {
         String formattedType = formatType(newType);
 
         if (!mPactTypes.contains(formattedType)) {
-            mPactTypes.add(mPactTypes.size() - 1, formattedType);
+            mPactTypes.add(formattedType);
             // We need to recreate the ArrayAdapter so we can click on the new pact type.
             Log.d(TAG, "addPactType");
             setSpinnerAdapter();
-
             ArrayList<String> newArg = new ArrayList<>(mPactTypes);
-            newArg.remove(newArg.size() - 1);
 
             // We need to set again the pact types argument for this fragment, without the "create type".
             getArguments().putSerializable(ARG_PACT_TYPES, newArg);
@@ -199,6 +254,47 @@ public class CreatePactFragment extends Fragment {
      */
     public interface OnCreatePactInteractionListener {
         public void onCreatePactPressed();
+    }
+
+    private class CreatePactAsyncTask extends AsyncTask<Pair<ArrayList<String>, Boolean>, Void, Void>{
+
+        private Context context;
+
+        protected CreatePactAsyncTask (Context context){
+            this.context = context;
+        }
+
+        @SafeVarargs
+        @Override
+        protected final Void doInBackground(Pair<ArrayList<String>, Boolean>... params) {
+            // Set up a pacts service.
+            mPactsService = Utils.setUpPactsService();
+
+            ArrayList<String> stringArgs = params[0].first;
+            Log.d(TAG, "doInBackground " + stringArgs.toString());
+
+
+            // We send all the data, the backend will know what to do with them.
+            try {
+                mPactsService.sendPactRequest(stringArgs.get(0), stringArgs.get(1), stringArgs.get(2),
+                        stringArgs.get(3), stringArgs.get(4), params[0].second).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            // Delete the service
+            mPactsService = null;
+
+            Toast toast = Toast.makeText(context, getString(R.string.info_pact_created), Toast.LENGTH_SHORT);
+            toast.show();
+
+            // TODO tell mainActivity to "press back"
+        }
     }
 
 }

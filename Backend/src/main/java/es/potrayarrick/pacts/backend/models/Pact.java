@@ -1,10 +1,12 @@
 package es.potrayarrick.pacts.backend.models;
 
 import com.google.appengine.repackaged.com.google.common.base.Pair;
-import com.google.appengine.repackaged.org.joda.time.DateTime;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
+
+import java.util.Date;
 
 
 /**
@@ -16,7 +18,7 @@ public class Pact {
      * The pact id.
      */
     @Id
-    private long id;
+    private Long id;
 
     /**
      * The name of the pact.
@@ -42,7 +44,8 @@ public class Pact {
     /**
      * The creation date of the pact.
      */
-    private DateTime creationDate;
+    @Index
+    private Date creationDate;
 
     /**
      * Whether the pact if fulfilled or not.
@@ -52,7 +55,8 @@ public class Pact {
     /**
      * The fulfillment date.
      */
-    private DateTime fulfillDate;
+    @Index
+    private Date fulfillDate;
 
     /**
      * Whether this pact is broken or not.
@@ -62,7 +66,8 @@ public class Pact {
     /**
      * The date the pact was broken.
      */
-    private DateTime brokenDate;
+    @Index
+    private Date brokenDate;
 
     /**
      * The users of the pact.
@@ -89,7 +94,7 @@ public class Pact {
         this.description = description;
         isFulfilled = false;
         isBroken = false;
-        creationDate = DateTime.now();
+        creationDate = new Date();
         users = new Pair<>(Key.create(user1), Key.create(user2));
     }
 
@@ -128,7 +133,7 @@ public class Pact {
      */
     public final void breakPact() {
         isBroken = true;
-        brokenDate = DateTime.now();
+        brokenDate = new Date();
     }
 
     /**
@@ -136,6 +141,6 @@ public class Pact {
      */
     public final void fullfill() {
         isFulfilled = true;
-        fulfillDate = DateTime.now();
+        fulfillDate = new Date();
     }
 }

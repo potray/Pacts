@@ -41,12 +41,20 @@
                 android:layout_marginLeft="8dp" />
 
             <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="162dp"
+                android:layout_height="match_parent"
                 android:id="@+id/pact_type"
                 android:layout_below="@+id/pact_description"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create"
+                android:id="@+id/create_pact_type_button"
+                android:layout_gravity="right" />
         </LinearLayout>
 
         <CheckBox

@@ -55,17 +55,21 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                String type = mTypeEditText.getText().toString();
+                String type = mTypeEditText.getText().toString().trim();
 
-                // TODO check the type doesn't exists.
+                // Integrity check.
+                if (type.isEmpty()) {
+                    mTypeEditText.setError(getString(R.string.error_field_required));
+                    mTypeEditText.requestFocus();
+                } else {
+                    // Get the user email from shared preferences.
+                    SharedPreferences preferences = getActivity().getSharedPreferences(Utils.PREFS_NAME, 0);
+                    String email = preferences.getString(Utils.Strings.USER_EMAIL, "");
 
-                // Get the user email from shared preferences.
-                SharedPreferences preferences = getActivity().getSharedPreferences(Utils.PREFS_NAME, 0);
-                String email = preferences.getString(Utils.Strings.USER_EMAIL, "");
-
-                // Launch task
-                mCreatePactTypeTask = new CreatePactTypeTask(email, type, getActivity().getApplicationContext());
-                mCreatePactTypeTask.execute();
+                    // Launch task
+                    mCreatePactTypeTask = new CreatePactTypeTask(email, type, getActivity().getApplicationContext());
+                    mCreatePactTypeTask.execute();
+                }
             }
         });
 
@@ -75,14 +79,19 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
         return view;
     }
 
-    private void sendNewPactTypeToPactFragment(String newType){
+    /**
+     * Sends the new pact type to {@link CreatePactFragment}.
+     *
+     * @param newType the new type.
+     */
+    private void sendNewPactTypeToPactFragment(final String newType) {
         if (mListener != null) {
             mListener.onCreatePactType(newType);
         }
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnCreatePactTypeDialogFragmentInteractionListener) activity;
@@ -93,7 +102,7 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
@@ -120,8 +129,9 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
 
         /**
          * Default constructor.
-         * @param email the user email.
-         * @param type the type to create.
+         *
+         * @param email   the user email.
+         * @param type    the type to create.
          * @param context the context of the activity.
          */
         protected CreatePactTypeTask(final String email, final String type, final Context context) {
@@ -166,9 +176,7 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
         @Override
         protected void onPostExecute(final Boolean success) {
             mCreatePactTypeTask = null;
-            if (success){
-                /*Toast toast = Toast.makeText(context, getString(R.string.info_pact_type_created), Toast.LENGTH_SHORT);
-                toast.show();*/
+            if (success) {
                 sendNewPactTypeToPactFragment(type.toLowerCase());
                 // Clean the text since if the user creates another type the current one will be there.
                 mTypeEditText.setText("");
@@ -177,8 +185,15 @@ public class CreatePactTypeDialogFragment extends DialogFragment {
         }
     }
 
-
+    /**
+     * An interface to communicate with {@link MainActivity}.
+     */
     public interface OnCreatePactTypeDialogFragmentInteractionListener {
+        /**
+         * Tells {@link MainActivity} to send the new type info to backend.
+         *
+         * @param type the new type.
+         */
         void onCreatePactType(String type);
     }
 }

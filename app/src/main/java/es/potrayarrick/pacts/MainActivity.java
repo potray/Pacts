@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements
         FriendRequestFragment.OnFriendRequestFragmentInteractionListener,
         FriendFragment.OnFriendFragmentInteractionListener,
         OnCreatePactInteractionListener,
-        CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener{
+        CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener {
 
     /**
      * A debugging tag.
@@ -58,10 +58,17 @@ public class MainActivity extends AppCompatActivity implements
      */
     private static final int DRAWER_OPTION_LOGOUT = 3;
     /**
+     * The friends backend service.
+     */
+    private static Friends mFriendsService = null;
+    /**
+     * The pacts backend service.
+     */
+    private static Pacts mPactsService = null;
+    /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -86,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements
      * The friend fragment.
      */
     private FriendFragment mFriendFragment;
-
     /**
      * The create pact fragment.
      */
@@ -95,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements
      * The received friend requests fragment.
      */
     private FriendRequestFragment mFriendRequestFragment;
-
     /**
      * The task for retrieving user info from backend.
      */
@@ -104,16 +109,6 @@ public class MainActivity extends AppCompatActivity implements
      * The task for sending friend requests responses to backend.
      */
     private ManageFriendRequestTask mManageFriendRequestTask;
-    /**
-     * The friends backend service.
-     */
-    private static Friends mFriendsService = null;
-    /**
-     * The pacts backend service
-     */
-    private static Pacts mPactsService = null;
-
-
     /**
      * The user email.
      */
@@ -142,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements
         mDrawerHandledFragments.add(mProfileFragment);
         mDrawerHandledFragments.add(mFriendsFragment);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)  getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
         //Load the pacts fragment
@@ -272,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFriendClick(User friend) {
+    public final void onFriendClick(final User friend) {
         // Set the friend fragment arguments.
         Bundle friendFragmentArguments = new Bundle();
         HashMap<String, String> friendInfo = new HashMap<>();
@@ -290,9 +285,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
     @Override
-    public void onCreatePactMenuPressed(String receiverEmail) {
+    public final void onCreatePactMenuPressed(final String receiverEmail) {
         // Set fragment arguments.
         Bundle arguments = mCreatePactFragment.getArguments();
         arguments.putString(CreatePactFragment.ARG_RECEIVER_EMAIL, receiverEmail);
@@ -311,14 +305,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCreatePactPressed() {
-
+    public final void onCreatePact() {
+        onBackPressed();
     }
 
 
-
     @Override
-    public void onCreatePactType(String type) {
+    public final void onCreatePactType(final String type) {
         mCreatePactFragment.addPactType(type);
     }
 
@@ -370,9 +363,10 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Hides the drawer, shows the back button and shows a new title.
+     *
      * @param newMenuTitle the new title to show.
      */
-    public final void hideDrawer (String newMenuTitle){
+    public final void hideDrawer(final String newMenuTitle) {
         // The fragment will have a back button instead of a drawer button.
         mNavigationDrawerFragment.toggleDrawerUse(false);
         // Change action bar title
@@ -392,6 +386,7 @@ public class MainActivity extends AppCompatActivity implements
 
         /**
          * Default constructor.
+         *
          * @param mEmail the email of the user.
          */
         private UserInfoTask(final String mEmail) {
@@ -441,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements
                     ArrayList<String> pactTypes = new ArrayList<>();
                     Log.d(TAG, "doInBackground - pactTypesItems = " + pactTypesItems.toString());
 
-                    for (PactType type : pactTypesItems){
+                    for (PactType type : pactTypesItems) {
                         pactTypes.add(type.getType());
                     }
                     createPactFragmentBundle.putSerializable(CreatePactFragment.ARG_PACT_TYPES, pactTypes);
@@ -450,7 +445,6 @@ public class MainActivity extends AppCompatActivity implements
                 mFriendsFragment.setArguments(friendsFragmentBundle);
                 mFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
                 mCreatePactFragment.setArguments(createPactFragmentBundle);
-
 
 
                 return true;

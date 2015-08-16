@@ -60,11 +60,13 @@ public class User {
     /**
      * The pact requests the user has sent.
      */
+    @JsonIgnore
     private ArrayList<Key<PactRequest>> sentPactRequests = new ArrayList<>();
 
     /**
      * The pact requests the user has received.
      */
+    @JsonIgnore
     private ArrayList<Key<PactRequest>> receivedPactRequests = new ArrayList<>();
 
     /**
@@ -76,11 +78,13 @@ public class User {
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
-    public User() { }
+    public User() {
+    }
 
     /**
      * Basic constructor.
-     * @param newUserEmail user email.
+     *
+     * @param newUserEmail    user email.
      * @param newUserPassword user password.
      */
     public User(final String newUserEmail, final String newUserPassword) {
@@ -90,6 +94,7 @@ public class User {
 
     /**
      * Get user email.
+     *
      * @return the email of the user.
      */
     @SuppressWarnings("unused") // The client uses this method.
@@ -99,6 +104,7 @@ public class User {
 
     /**
      * Get user password.
+     *
      * @return the password of the user.
      */
     public final String getPassword() {
@@ -107,6 +113,7 @@ public class User {
 
     /**
      * Get user surname.
+     *
      * @return the surname of the user.
      */
     @SuppressWarnings("unused") // The client uses this method.
@@ -116,6 +123,7 @@ public class User {
 
     /**
      * Set user surname.
+     *
      * @param surname the new surname of the user.
      */
     public final void setSurname(final String surname) {
@@ -124,6 +132,7 @@ public class User {
 
     /**
      * Get user name.
+     *
      * @return the name of the user.
      */
     @SuppressWarnings("unused") // The client uses this method.
@@ -133,6 +142,7 @@ public class User {
 
     /**
      * Set user name.
+     *
      * @param name the new name of the user.
      */
     public final void setName(final String name) {
@@ -141,6 +151,7 @@ public class User {
 
     /**
      * Adds a new friend to the friend list.
+     *
      * @param friend the key of new friend to add.
      */
     public final void addFriend(final Key<User> friend) {
@@ -149,6 +160,7 @@ public class User {
 
     /**
      * Adds a new friend request to the sent ones.
+     *
      * @param request the key of the sent request.
      */
     public final void sendFriendRequest(final Key<FriendRequest> request) {
@@ -157,6 +169,7 @@ public class User {
 
     /**
      * Adds a new friend request to the received ones.
+     *
      * @param request the key of the received request.
      */
     public final void receiveFriendRequest(final Key<FriendRequest> request) {
@@ -165,13 +178,16 @@ public class User {
 
     /**
      * Deletes a sent friend request.
+     *
      * @param request the key of the request to delete.
      */
     public final void deleteSentFriendRequest(final Key<FriendRequest> request) {
         sentFriendRequests.remove(request);
     }
+
     /**
      * Deletes a received friend request.
+     *
      * @param request the key of the request to delete.
      */
     public final void deleteReceivedFriendRequest(final Key<FriendRequest> request) {
@@ -180,6 +196,7 @@ public class User {
 
     /**
      * Checks if an user is a friend of this.
+     *
      * @param user the user to check.
      * @return true if both users are friends.
      */
@@ -189,13 +206,14 @@ public class User {
 
     /**
      * Gets the friends of the user.
+     *
      * @return a list of User.
      */
     @JsonIgnore
     public final ArrayList<User> getFriends() {
         ArrayList<User> friends = new ArrayList<>();
 
-        for (Key<User> key:this.friends) {
+        for (Key<User> key : this.friends) {
             friends.add(ofy().load().key(key).now());
         }
 
@@ -204,6 +222,7 @@ public class User {
 
     /**
      * Gets the pending friend requests of the user.
+     *
      * @return a list of friend requests.
      */
     @JsonIgnore
@@ -217,6 +236,11 @@ public class User {
         return pendingRequests;
     }
 
+    /**
+     * Gets the received pact requests.
+     *
+     * @return a list of pact requests.
+     */
     public final ArrayList<PactRequest> getReceivedPactRequests() {
         ArrayList<PactRequest> requests = new ArrayList<>();
 
@@ -227,10 +251,15 @@ public class User {
         return requests;
     }
 
+    /**
+     * Gets the user's pacts.
+     *
+     * @return a list of pacts.
+     */
     public final ArrayList<Pact> getPacts() {
         ArrayList<Pact> pacts = new ArrayList<>();
 
-        for (Key<Pact> key : this.pacts){
+        for (Key<Pact> key : this.pacts) {
             pacts.add(ofy().load().key(key).now());
         }
 
@@ -239,9 +268,10 @@ public class User {
 
     /**
      * Adds a new pact type to the list.
+     *
      * @param type the type to add.
      */
-    public final void addPactType (PactType type) {
+    public final void addPactType(final PactType type) {
         Key<PactType> typeKey = Key.create(type);
 
         if (!usedPactTypes.contains(typeKey)) {
@@ -249,9 +279,14 @@ public class User {
         }
     }
 
-    public ArrayList<PactType> getPactTypes () {
+    /**
+     * Gets the user pact types.
+     *
+     * @return a list of pact types.
+     */
+    public final ArrayList<PactType> getPactTypes() {
         ArrayList<PactType> types = new ArrayList<>();
-        for (Key<PactType> key : usedPactTypes){
+        for (Key<PactType> key : usedPactTypes) {
             types.add(ofy().load().key(key).now());
         }
         return types;
@@ -259,33 +294,37 @@ public class User {
 
     /**
      * Adds a new pact request to the sent ones.
+     *
      * @param request the request to add.
      */
-    public final void sendPactRequest (PactRequest request) {
+    public final void sendPactRequest(final PactRequest request) {
         sentPactRequests.add(Key.create(request));
     }
 
     /**
      * Adds a new pact request to the received ones.
+     *
      * @param request the request to add.
      */
-    public final void receivePactRequest (PactRequest request) {
+    public final void receivePactRequest(final PactRequest request) {
         receivedPactRequests.add(Key.create(request));
     }
 
     /**
      * Deletes a sent pact requests.
+     *
      * @param request the request to delete.
      */
-    public final void deleteSentPactRequest (PactRequest request) {
+    public final void deleteSentPactRequest(final PactRequest request) {
         sentPactRequests.remove(Key.create(request));
     }
 
     /**
      * Deletes a received pact request.
+     *
      * @param request the request to delete.
      */
-    public final void deleteReceivedPactRequest (PactRequest request) {
+    public final void deleteReceivedPactRequest(final PactRequest request) {
         receivedPactRequests.remove(Key.create(request));
     }
 }

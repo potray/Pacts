@@ -13,6 +13,7 @@ import es.potrayarrick.pacts.backend.models.Pact;
 import es.potrayarrick.pacts.backend.models.PactRequest;
 import es.potrayarrick.pacts.backend.models.PactType;
 import es.potrayarrick.pacts.backend.models.User;
+
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 /**
@@ -28,17 +29,18 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
 public class Pacts {
     /**
      * Send a pact request to a user.
-     * @param senderEmail the sender email.
-     * @param receiverEmail the receiver email.
-     * @param pactName the name of the pact.
+     *
+     * @param senderEmail     the sender email.
+     * @param receiverEmail   the receiver email.
+     * @param pactName        the name of the pact.
      * @param pactDescription the description of the pact.
-     * @param pactType the type of the pact (if any).
-     * @param isPromise whether the pact is a promise.
+     * @param pactType        the type of the pact (if any).
+     * @param isPromise       whether the pact is a promise.
      */
     @ApiMethod(name = "sendPactRequest")
-    public final void sendPactRequest (@Named("sender") final String senderEmail, @Named("receiver") final String receiverEmail,
-                                       @Named ("name") final String pactName, @Named("description") final String pactDescription,
-                                       @Named ("type") final String pactType, @Named ("isPromise") final boolean isPromise){
+    public final void sendPactRequest(@Named("sender") final String senderEmail, @Named("receiver") final String receiverEmail,
+                                      @Named("name") final String pactName, @Named("description") final String pactDescription,
+                                      @Named("type") final String pactType, @Named("isPromise") final boolean isPromise) {
 
         // Get sender and receiver.
         User sender = ofy().load().type(User.class).id(senderEmail).now();
@@ -46,8 +48,8 @@ public class Pacts {
 
 
         // Create the pact and the request
-        Pact pact = new Pact (pactName, pactDescription, sender, receiver);
-        if (!isPromise){
+        Pact pact = new Pact(pactName, pactDescription, sender, receiver);
+        if (!isPromise) {
             // Check if a pact type should be created.
             PactType type = ofy().load().type(PactType.class).id(pactType).now();
 
@@ -79,27 +81,40 @@ public class Pacts {
 
     /**
      * Get the received pact requests of an user.
+     *
      * @param email the user's email.
      * @return the list of the received pact requests.
      */
-    @ApiMethod (name = "getPactRequests")
-    public final ArrayList<PactRequest> getPactRequests (@Named ("email") final String email) {
+    @ApiMethod(name = "getPactRequests")
+    public final ArrayList<PactRequest> getPactRequests(@Named("email") final String email) {
         // Get user
         User user = ofy().load().type(User.class).id(email).now();
         return user.getReceivedPactRequests();
     }
 
-
-    @ApiMethod (name = "getPacts")
-    public final ArrayList<Pact> getPacts (@Named ("email") final String email) {
+    /**
+     * Get the pacts of an user.
+     *
+     * @param email the user's email.
+     * @return the list of the user's pacts.
+     */
+    @ApiMethod(name = "getPacts")
+    public final ArrayList<Pact> getPacts(@Named("email") final String email) {
         // Get user
         User user = ofy().load().type(User.class).id(email).now();
         return user.getPacts();
     }
 
-    @ApiMethod (name = "createPactType")
-    public final void createPactType (@Named ("email") final String email,
-                                      @Named ("type") final String newType){
+    /**
+     * Create a new pact type and add it to the user's pact types.
+     * If the pact already exists it just adds it to the user's pact types.
+     *
+     * @param email   the email of the user.
+     * @param newType the new pact type.
+     */
+    @ApiMethod(name = "createPactType")
+    public final void createPactType(@Named("email") final String email,
+                                     @Named("type") final String newType) {
         // Get user and type.
         User user = ofy().load().type(User.class).id(email).now();
         PactType type = ofy().load().type(PactType.class).id(newType).now();
@@ -114,8 +129,14 @@ public class Pacts {
         ofy().save().entity(user).now();
     }
 
-    @ApiMethod (name = "getUserPactTypes")
-    public final ArrayList<PactType> getUserPactTypes (@Named ("email") final String email) {
+    /**
+     * Get the pact types of an user.
+     *
+     * @param email the email of the user.
+     * @return a list with all the pact types of the user.
+     */
+    @ApiMethod(name = "getUserPactTypes")
+    public final ArrayList<PactType> getUserPactTypes(@Named("email") final String email) {
         // Get user
         User user = ofy().load().type(User.class).id(email).now();
 

@@ -3,7 +3,11 @@
     android:layout_height="match_parent" tools:context="es.potrayarrick.pacts.PactsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Pacts!" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pacts_list"
+        android:layout_gravity="center_horizontal|top" />
 
 </FrameLayout>

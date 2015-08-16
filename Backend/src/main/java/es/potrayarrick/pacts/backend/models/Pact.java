@@ -1,12 +1,14 @@
 package es.potrayarrick.pacts.backend.models;
 
-import com.google.appengine.repackaged.com.google.common.base.Pair;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 import java.util.Date;
+
+
+import static es.potrayarrick.pacts.backend.OfyService.ofy;
 
 
 /**
@@ -72,7 +74,7 @@ public class Pact {
     /**
      * The users of the pact.
      */
-    private Pair<Key<User>, Key<User>> users;
+    private Key<User> user1, user2;
 
     /**
      * No-arg constructor for objectify.
@@ -95,7 +97,8 @@ public class Pact {
         isFulfilled = false;
         isBroken = false;
         creationDate = new Date();
-        users = new Pair<>(Key.create(user1), Key.create(user2));
+        this.user1 = Key.create(user1);
+        this.user2 = Key.create(user2);
     }
 
     /**
@@ -142,5 +145,38 @@ public class Pact {
     public final void fullfill() {
         isFulfilled = true;
         fulfillDate = new Date();
+    }
+
+    /**
+     * Gets the email of the user 1.
+     * @return the email of the user1.
+     */
+    @SuppressWarnings("unused") // This is for the client.
+    public final String getUser1Email() {
+        return ofy().load().key(user1).now().getEmail();
+    }
+
+    /**
+     * Gets the complete name of the user 1.
+     * @return the name and the surname of the user1.
+     */
+    @SuppressWarnings("unused") // This is for the client.
+    public final String getUser1CompleteName() {
+        User user = ofy().load().key(user1).now();
+        return (user.getName() + " " + user.getSurname());
+    }
+
+    /**
+     * Gets the complete name of the user 2.
+     * @return the name and the surname of the user1.
+     */
+    @SuppressWarnings("unused") // This is for the client.
+    public final String getUser2CompleteName() {
+        User user = ofy().load().key(user2).now();
+        return (user.getName() + " " + user.getSurname());
+    }
+
+    public final String getName() {
+        return this.name;
     }
 }

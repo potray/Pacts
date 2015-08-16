@@ -71,9 +71,12 @@ public class Pacts {
         PactRequest request = new PactRequest(Key.create(sender), Key.create(receiver), pact);
         ofy().save().entity(request).now();
 
-        // Send the request to the user
+        // Send the request to the user.
         sender.sendPactRequest(request);
         receiver.receivePactRequest(request);
+
+        // The sender has the pact.
+        sender.addPact(pact);
 
         ofy().save().entity(sender);
         ofy().save().entity(receiver);

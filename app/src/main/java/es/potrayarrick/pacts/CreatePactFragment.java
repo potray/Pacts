@@ -217,7 +217,7 @@ public class CreatePactFragment extends Fragment {
                     continueTask = false;
                     pactDescription.setError(getString(R.string.error_field_required));
                     focusView = pactDescription;
-                } else if ((mPactTypes != null || mPactType.isEmpty()) && !isPromise) {
+                } else if ((mPactTypes == null || mPactType.isEmpty()) && !isPromise) {
                     // There is no pact types.
                     continueTask = false;
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), R.string.error_no_pact_types, Toast.LENGTH_SHORT);
@@ -226,8 +226,9 @@ public class CreatePactFragment extends Fragment {
 
                 // Launch the task.
                 if (continueTask) {
-                    // Hide the keyboard
-
+                    // Reset InputTexts.
+                    pactName.setText("");
+                    pactDescription.setText("");
 
                     // Hide the keyboard since it could be opened.
                     InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

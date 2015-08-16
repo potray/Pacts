@@ -31,6 +31,7 @@ import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
 import backend.pacts.potrayarrick.es.friends.model.Message;
 import backend.pacts.potrayarrick.es.friends.model.User;
 import backend.pacts.potrayarrick.es.pacts.Pacts;
+import backend.pacts.potrayarrick.es.pacts.model.Pact;
 import backend.pacts.potrayarrick.es.pacts.model.PactType;
 import es.potrayarrick.pacts.CreatePactFragment.OnCreatePactInteractionListener;
 
@@ -140,19 +141,17 @@ public class MainActivity extends AppCompatActivity implements
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        //Load the pacts fragment
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
+        // Set up services
+        mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
+        mUserInfoTask = new UserInfoTask(mEmail);
+        mUserInfoTask.execute();
+        mManageFriendRequestTask = new ManageFriendRequestTask();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        // Set up services
-        mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
-        mUserInfoTask = new UserInfoTask(mEmail);
-        mUserInfoTask.execute();
-        mManageFriendRequestTask = new ManageFriendRequestTask();
     }
 
     @Override
@@ -224,8 +223,10 @@ public class MainActivity extends AppCompatActivity implements
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             this.finish();
         } else {
-            // We start using the drawer again.
-            mNavigationDrawerFragment.toggleDrawerUse(true);
+            if (getFragmentManager().getBackStackEntryCount() == 1){
+                // We start using the drawer again.
+                mNavigationDrawerFragment.toggleDrawerUse(true);
+            }
             // Pop fragment and restore previous title.
             getFragmentManager().popBackStack();
             mTitle = mPreviousTitle;
@@ -306,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public final void onCreatePact() {
+        // TODO send pact info to the pacts fragment.
         onBackPressed();
     }
 
@@ -376,6 +378,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
+     * A fragment could require the user email, so this enables it to not use SharedPreferences.
+     * @return the user's email.
+     */
+    public final String getUserEmail (){
+        return mEmail;
+    }
+
+    /**
      * A task to get the user info.
      */
     private final class UserInfoTask extends AsyncTask<Void, Void, Boolean> {
@@ -404,10 +414,12 @@ public class MainActivity extends AppCompatActivity implements
                 Bundle friendsFragmentBundle = new Bundle();
                 Bundle friendRequestsFragmentBundle = new Bundle();
                 Bundle createPactFragmentBundle = new Bundle();
+                Bundle pactsFragmentBundle = new Bundle();
 
                 Collection<User> friendsItems = mFriendsService.getUserFriends(mEmail).execute().getItems();
                 Collection<FriendRequest> friendRequestsItems = mFriendsService.getUserFriendRequests(mEmail).execute().getItems();
                 Collection<PactType> pactTypesItems = mPactsService.getUserPactTypes(mEmail).execute().getItems();
+                Collection<Pact> pactsItems = mPactsService.getPacts(mEmail).execute().getItems();
 
                 if (friendsItems != null) {
                     ArrayList<User> friends = new ArrayList<>(friendsItems);
@@ -442,9 +454,26 @@ public class MainActivity extends AppCompatActivity implements
                     createPactFragmentBundle.putSerializable(CreatePactFragment.ARG_PACT_TYPES, pactTypes);
                 }
 
+                if (pactsItems != null && !pactsItems.isEmpty()) {
+                    ArrayList<Pact> pacts = new ArrayList<>();
+                    Log.d(TAG, "doInBackground - pactsItems = " + pactsItems.toString());
+
+                    for (Pact pact : pactsItems){
+                        pacts.add(pact);
+                    }
+
+                    pactsFragmentBundle.putSerializable(PactsFragment.ARG_PACTS, pacts);
+
+                    pactsFragmentBundle.putBoolean(PactsFragment.ARG_HIDE_PACT_REQUESTS_MENU, false);
+                } else {
+                    Log.d(TAG, "doInBackground - No pacts!");
+                    pactsFragmentBundle.putBoolean(PactsFragment.ARG_HIDE_PACT_REQUESTS_MENU, true);
+                }
+
                 mFriendsFragment.setArguments(friendsFragmentBundle);
                 mFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
                 mCreatePactFragment.setArguments(createPactFragmentBundle);
+                mPactsFragment.setArguments(pactsFragmentBundle);
 
 
                 return true;
@@ -452,6 +481,12 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
                 return false;
             }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            //Load the pacts fragment
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
         }
     }
 

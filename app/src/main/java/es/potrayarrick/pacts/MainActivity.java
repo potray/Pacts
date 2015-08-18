@@ -32,8 +32,8 @@ import backend.pacts.potrayarrick.es.friends.model.Message;
 import backend.pacts.potrayarrick.es.friends.model.User;
 import backend.pacts.potrayarrick.es.pacts.Pacts;
 import backend.pacts.potrayarrick.es.pacts.model.Pact;
+import backend.pacts.potrayarrick.es.pacts.model.PactRequest;
 import backend.pacts.potrayarrick.es.pacts.model.PactType;
-import es.potrayarrick.pacts.CreatePactFragment.OnCreatePactInteractionListener;
 
 /**
  * The main activity of the app.
@@ -45,8 +45,9 @@ public class MainActivity extends AppCompatActivity implements
         PactsFragment.OnPactsFragmentInteractionListener,
         FriendRequestFragment.OnFriendRequestFragmentInteractionListener,
         FriendFragment.OnFriendFragmentInteractionListener,
-        OnCreatePactInteractionListener,
-        CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener {
+        CreatePactFragment.OnCreatePactInteractionListener,
+        CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener,
+        PactRequestsFragment.OnFragmentInteractionListener{
 
     /**
      * A debugging tag.
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements
      * Used to store previous fragment title.
      */
     private CharSequence mPreviousTitle;
+
+//region Fragments
+
     /**
      * The profile fragment.
      */
@@ -102,6 +106,14 @@ public class MainActivity extends AppCompatActivity implements
      * The received friend requests fragment.
      */
     private FriendRequestFragment mFriendRequestFragment;
+    /**
+     * The received pact requests fragment.
+     */
+    private PactRequestsFragment mPactRequestsFragment;
+
+//endregion
+
+
     /**
      * The task for retrieving user info from backend.
      */
@@ -132,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements
         mFriendFragment = new FriendFragment();
         mFriendRequestFragment = new FriendRequestFragment();
         mCreatePactFragment = new CreatePactFragment();
+        mPactRequestsFragment = new PactRequestsFragment();
 
         mDrawerHandledFragments = new ArrayList<>();
         mDrawerHandledFragments.add(mPactsFragment);
@@ -191,17 +204,6 @@ public class MainActivity extends AppCompatActivity implements
                     break;
             }
             restoreActionBar();
-        }
-    }
-
-    /**
-     * Restores the action bar, mainly for updating the title.
-     */
-    public final void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setTitle(mTitle);
         }
     }
 
@@ -267,6 +269,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    //region Fragment interface implementations.
+
     @Override
     public final void onFriendClick(final User friend) {
         // Set the friend fragment arguments.
@@ -315,6 +319,26 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public final void onCreatePactType(final String type) {
         mCreatePactFragment.addPactType(type);
+    }
+
+    @Override
+    public void onMenuPactsRequests() {
+        // Show the pact requests fragment.
+        hideDrawer(getString(R.string.action_view_pact_requests));
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactRequestsFragment).addToBackStack(null).commit();
+    }
+//endregion
+
+
+    /**
+     * Restores the action bar, mainly for updating the title.
+     */
+    public final void restoreActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(mTitle);
+        }
     }
 
     /**
@@ -415,11 +439,13 @@ public class MainActivity extends AppCompatActivity implements
                 Bundle friendRequestsFragmentBundle = new Bundle();
                 Bundle createPactFragmentBundle = new Bundle();
                 Bundle pactsFragmentBundle = new Bundle();
+                Bundle pactRequestsFragmentBundle = new Bundle();
 
                 Collection<User> friendsItems = mFriendsService.getUserFriends(mEmail).execute().getItems();
                 Collection<FriendRequest> friendRequestsItems = mFriendsService.getUserFriendRequests(mEmail).execute().getItems();
                 Collection<PactType> pactTypesItems = mPactsService.getUserPactTypes(mEmail).execute().getItems();
                 Collection<Pact> pactsItems = mPactsService.getPacts(mEmail).execute().getItems();
+                Collection<PactRequest> pactRequestsItems = mPactsService.getPactRequests(mEmail).execute().getItems();
 
                 if (friendsItems != null) {
                     ArrayList<User> friends = new ArrayList<>(friendsItems);
@@ -463,10 +489,19 @@ public class MainActivity extends AppCompatActivity implements
                     }
 
                     pactsFragmentBundle.putSerializable(PactsFragment.ARG_PACTS, pacts);
+                }
+
+                if (pactRequestsItems != null && !pactRequestsItems.isEmpty()) {
+                    ArrayList<PactRequest> pactRequests = new ArrayList<>();
+                    Log.d(TAG, "doInBackground - We have pact requests: " + pactRequestsItems.toString());
+
+                    pactRequests.addAll(pactRequestsItems);
+
+                    pactRequestsFragmentBundle.putSerializable(PactRequestsFragment.ARG_PACT_REQUESTS, pactRequests);
 
                     pactsFragmentBundle.putBoolean(PactsFragment.ARG_HIDE_PACT_REQUESTS_MENU, false);
                 } else {
-                    Log.d(TAG, "doInBackground - No pacts!");
+                    Log.d(TAG, "doInBackground - No pact requests.");
                     pactsFragmentBundle.putBoolean(PactsFragment.ARG_HIDE_PACT_REQUESTS_MENU, true);
                 }
 
@@ -474,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements
                 mFriendRequestFragment.setArguments(friendRequestsFragmentBundle);
                 mCreatePactFragment.setArguments(createPactFragmentBundle);
                 mPactsFragment.setArguments(pactsFragmentBundle);
-
+                mPactRequestsFragment.setArguments(pactRequestsFragmentBundle);
 
                 return true;
             } catch (IOException e) {

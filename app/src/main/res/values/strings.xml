@@ -64,5 +64,9 @@
     <string name="info_pact_created">The pact was created</string>
     <string name="error_no_pact_types">Create a pact type first</string>
 
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="info_pact_request_not_accepted">Your friend haven\'t accepted this pact yet.</string>
+
 
 </resources>

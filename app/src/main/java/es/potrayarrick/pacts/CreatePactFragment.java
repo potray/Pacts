@@ -5,9 +5,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -139,6 +142,14 @@ public class CreatePactFragment extends Fragment {
         Log.d(TAG, "onCreateView");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_pact, container, false);
+
+        // Add back button to the action bar
+        setHasOptionsMenu(true);
+        ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionbar != null) {
+            setHasOptionsMenu(true);
+            actionbar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // UI elements
         final EditText pactName = (EditText) view.findViewById(R.id.pact_name);
@@ -323,6 +334,17 @@ public class CreatePactFragment extends Fragment {
     public final void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

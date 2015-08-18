@@ -3,12 +3,12 @@ package es.potrayarrick.pacts;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -93,9 +93,9 @@ public class PactsFragment extends Fragment {
                 // Get the email of the other user of the pact.
                 String user1Email = pact.getUser1Email();
                 if (user1Email.equals(((MainActivity)getActivity()).getUserEmail())){
-                    item.userName = pact.getUser1CompleteName();
-                } else {
                     item.userName = pact.getUser2CompleteName();
+                } else {
+                    item.userName = pact.getUser1CompleteName();
                 }
 
                 item.pactName = pact.getName();
@@ -129,13 +129,6 @@ public class PactsFragment extends Fragment {
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -153,19 +146,19 @@ public class PactsFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_pacts_requests){
+            mListener.onMenuPactsRequests();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * An interface to communicate with {@link MainActivity}.
      */
     public interface OnPactsFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onMenuPactsRequests();
     }
 
     /**

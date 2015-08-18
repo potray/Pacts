@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,7 @@ import backend.pacts.potrayarrick.es.pacts.model.Pact;
  */
 public class PactFragment extends Fragment {
     public static final String ARG_PACT = "pact";
+    private static final String TAG = "PactFragment";
 
     private Pact mPact;
 
@@ -52,6 +55,7 @@ public class PactFragment extends Fragment {
         if (getArguments() != null) {
             ArrayList<Pact> pactArgument = (ArrayList<Pact>) getArguments().getSerializable(ARG_PACT);
             if (pactArgument != null) {
+                Log.d(TAG, "onCreate - pactArgument = " + pactArgument.toString());
                 mPact = pactArgument.get(0);
             }
         }
@@ -61,6 +65,32 @@ public class PactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pact, container, false);
+
+        // UI elements
+        TextView pactTypeAndUserView = (TextView) view.findViewById(R.id.pact_type_and_user);
+        TextView pactDescriptionView = (TextView) view.findViewById(R.id.pact_description);
+
+        // Get the type and user string.
+        String userName;
+        String pactTypeIntro = getString(R.string.pact_type_and_user_intro);
+        String pactTypeMiddle = getString(R.string.pact_type_and_user_middle);
+
+        if (((MainActivity)getActivity()).getUserEmail().equals(mPact.getUser1Email())){
+            userName = mPact.getUser2CompleteName();
+        } else {
+            userName = mPact.getUser1CompleteName();
+        }
+
+        String typeAndUser = pactTypeIntro + " " + mPact.getType() + " " +
+                pactTypeMiddle + " " + userName;
+
+        pactTypeAndUserView.setText(typeAndUser);
+        pactDescriptionView.setText(mPact.getDescription());
+
+        // Hide the "not accepted" if necessary.
+        if (mPact.getAccepted()){
+            view.findViewById(R.id.unaccepted_pact_text).setVisibility(View.INVISIBLE);
+        }
 
         return view;
     }

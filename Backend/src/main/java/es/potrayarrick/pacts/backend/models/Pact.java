@@ -41,7 +41,7 @@ public class Pact {
      * The type of the pact. Null if {@link #isPromise} = true.
      * @see PactType
      */
-    private PactType type;
+    private String type;
 
     /**
      * The creation date of the pact.
@@ -132,7 +132,7 @@ public class Pact {
      * @param type the new type.
      */
     public final void setType(final PactType type) {
-        this.type = type;
+        this.type = type.getType();
         // Pacts with types are not promises.
         isPromise = false;
     }
@@ -201,5 +201,9 @@ public class Pact {
 
     public final String getName() {
         return this.name;
+    }
+
+    public final String getType() {
+        return type;
     }
 }

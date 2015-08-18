@@ -80,7 +80,11 @@ public final class OfyService {
                 testUser.receiveFriendRequest(request2Key);
 
 
+                PactType testPactType = new PactType("Test");
+                ofy().save().entity(testPactType).now();
+
                 Pact testPact = new Pact("Test pact", "A pact for testing", testFriend2, testUser);
+                testPact.setType(testPactType);
                 ofy().save().entity(testPact).now();
 
                 PactRequest testRequest = new PactRequest(testFriend2Key, testUserKey, testPact);

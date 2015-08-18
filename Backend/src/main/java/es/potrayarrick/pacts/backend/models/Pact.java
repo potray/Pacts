@@ -77,6 +77,11 @@ public class Pact {
     private Key<User> user1, user2;
 
     /**
+     * Whether this pact was accepted or not.
+     */
+    private boolean isAccepted;
+
+    /**
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
@@ -94,6 +99,7 @@ public class Pact {
     public Pact(final String name, final String description, final User user1, final User user2) {
         this.name = name;
         this.description = description;
+        isAccepted = false;
         isFulfilled = false;
         isBroken = false;
         creationDate = new Date();
@@ -129,6 +135,23 @@ public class Pact {
         this.type = type;
         // Pacts with types are not promises.
         isPromise = false;
+    }
+
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public boolean isBroken() {
+        return isBroken;
+    }
+
+    public boolean isPromise() {
+        return isPromise;
+    }
+
+    public final void accept(){
+
+        isAccepted = true;
     }
 
     /**

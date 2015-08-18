@@ -17,7 +17,7 @@ import backend.pacts.potrayarrick.es.pacts.model.Pact;
  * The pact fragment.
  */
 public class PactFragment extends Fragment {
-    private static final String ARG_PACT = "pact";
+    public static final String ARG_PACT = "pact";
 
     private Pact mPact;
 
@@ -79,7 +79,7 @@ public class PactFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnPactRequestsInteractionListener");
         }
     }
 

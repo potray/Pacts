@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements
         FriendFragment.OnFriendFragmentInteractionListener,
         CreatePactFragment.OnCreatePactInteractionListener,
         CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener,
-        PactRequestsFragment.OnFragmentInteractionListener{
+        PactRequestsFragment.OnPactRequestsInteractionListener,
+        PactFragment.OnFragmentInteractionListener{
 
     /**
      * A debugging tag.
@@ -110,7 +111,10 @@ public class MainActivity extends AppCompatActivity implements
      * The received pact requests fragment.
      */
     private PactRequestsFragment mPactRequestsFragment;
-
+    /**
+     * The pact fragment.
+     */
+    private PactFragment mPactFragment;
 //endregion
 
 
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements
         mFriendRequestFragment = new FriendRequestFragment();
         mCreatePactFragment = new CreatePactFragment();
         mPactRequestsFragment = new PactRequestsFragment();
+        mPactFragment = new PactFragment();
 
         mDrawerHandledFragments = new ArrayList<>();
         mDrawerHandledFragments.add(mPactsFragment);
@@ -327,6 +332,23 @@ public class MainActivity extends AppCompatActivity implements
         hideDrawer(getString(R.string.action_view_pact_requests));
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactRequestsFragment).addToBackStack(null).commit();
     }
+
+
+    @Override
+    public void onPactRequestItemPressed(Pact pact) {
+        // Set the pact fragment arguments and show it.
+        hideDrawer(pact.getName());
+
+        // We use an ArrayList to automatically serialize the pact.
+        ArrayList<Pact> pactArgument = new ArrayList<>();
+        pactArgument.add(pact);
+
+        Bundle argsBundle = new Bundle();
+        argsBundle.putSerializable(PactFragment.ARG_PACT, pactArgument);
+
+        mPactFragment.setArguments(argsBundle);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactFragment).addToBackStack(null).commit();
+    }
 //endregion
 
 
@@ -408,6 +430,7 @@ public class MainActivity extends AppCompatActivity implements
     public final String getUserEmail (){
         return mEmail;
     }
+
 
     /**
      * A task to get the user info.

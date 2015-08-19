@@ -1,16 +1,20 @@
 package es.potrayarrick.pacts;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import backend.pacts.potrayarrick.es.pacts.model.Pact;
 
@@ -69,6 +73,7 @@ public class PactFragment extends Fragment {
         // UI elements
         TextView pactTypeAndUserView = (TextView) view.findViewById(R.id.pact_type_and_user);
         TextView pactDescriptionView = (TextView) view.findViewById(R.id.pact_description);
+        TextView pactCreationDateView = (TextView) view.findViewById(R.id.pact_date);
 
         // Get the type and user string.
         String userName;
@@ -87,19 +92,41 @@ public class PactFragment extends Fragment {
         pactTypeAndUserView.setText(typeAndUser);
         pactDescriptionView.setText(mPact.getDescription());
 
+        // Set the creation date string.
+        String creationDateStringStart = getString(R.string.pact_info_creation_date);
+        Locale deviceLanguage = getResources().getConfiguration().locale;
+        // We need to create a Java date, since getCreationDate() returns com.google.api.client.util.DateTime.
+        Date creationDate = new Date(mPact.getCreationDate().getValue());
+        String creationDateString;
+
+        // Spanish is not standard so we have to create it.
+        Locale spanishLocale = new Locale ("es", "ES");
+
+        if (deviceLanguage.equals(spanishLocale)){
+            creationDateString = new SimpleDateFormat("dd/MM/yyyy", spanishLocale).format(creationDate);
+        } else {
+            // English by default.
+            creationDateString = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(creationDate);
+        }
+
+        pactCreationDateView.setText(creationDateStringStart + " " + creationDateString);
+
         // Hide the "not accepted" if necessary.
         if (mPact.getAccepted()){
-            view.findViewById(R.id.unaccepted_pact_text).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.pact_not_accepted_layout).setVisibility(View.INVISIBLE);
+        } else {
+            // Set the accept pact callback.
+            Button acceptPactButton = (Button) view.findViewById(R.id.accept_pact_button);
+
+            acceptPactButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -120,14 +147,7 @@ public class PactFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * An
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

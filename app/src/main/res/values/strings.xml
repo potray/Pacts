@@ -63,10 +63,14 @@
     <string name="info_pact_type_created">The pact type was created</string>
     <string name="info_pact_created">The pact was created</string>
     <string name="error_no_pact_types">Create a pact type first</string>
-    <string name="info_pact_request_not_accepted">Your friend haven\'t accepted this pact yet.</string>
+    <string name="info_pact_request_not_accepted">This pact isn\'t accepted.</string>
     <!-- This is for getting sentences like "A blood pact with Peter" and then translate them-->
     <string name="pact_type_and_user_intro">A</string>
     <string name="pact_type_and_user_middle">pact with</string>
+    <string name="pact_info_creation_date">Created on</string>
+    <string name="pact_info_fulfill_date">Fulfilled on</string>
+    <string name="pact_info_cancel_date">Canceled on</string>
+    <string name="action_accept_pact">Accept pact</string>
 
 
 </resources>

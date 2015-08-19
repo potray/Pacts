@@ -206,4 +206,20 @@ public class Pact {
     public final String getType() {
         return type;
     }
+
+    public Date getBrokenDate() {
+        return brokenDate;
+    }
+
+    public Date getFulfillDate() {
+        return fulfillDate;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

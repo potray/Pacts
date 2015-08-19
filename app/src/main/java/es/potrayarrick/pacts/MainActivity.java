@@ -433,9 +433,12 @@ public class MainActivity extends AppCompatActivity implements
     public void onAcceptPact(Pact pact) {
         PactActionAsyncTask task = new PactActionAsyncTask(pact, "ACCEPT");
         task.execute();
+    }
 
-
-
+    @Override
+    public void onRejectPact(Pact pact) {
+        PactActionAsyncTask task = new PactActionAsyncTask(pact, "REJECT");
+        task.execute();
     }
 
     @Override
@@ -650,10 +653,9 @@ public class MainActivity extends AppCompatActivity implements
                     mPactsFragment.setHidePactRequestButton(mPactRequestsFragment.deletePactRequest(pact));
                     mPactsFragment.addPact(pact);
                     mPactFragment.pactAccepted();
-
-                    // Update the arguments
                     break;
-                case "CANCEL":
+                case "REJECT":
+                    mPactsFragment.setHidePactRequestButton(mPactRequestsFragment.deletePactRequest(pact));
                     break;
                 case "FULFILL":
                     break;

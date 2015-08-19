@@ -135,6 +135,16 @@ public class PactFragment extends Fragment {
                     mListener.onAcceptPact(mPact);
                 }
             });
+
+            // Set the reject pact callback.
+            Button rejectPactButton = (Button) view.findViewById(R.id.reject_pact_button);
+
+            rejectPactButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onRejectPact(mPact);
+                }
+            });
         }
 
         return view;
@@ -186,6 +196,7 @@ public class PactFragment extends Fragment {
      */
     public interface OnPactFragmentInteractionListener {
         void onAcceptPact(Pact pact);
+        void onRejectPact(Pact pact);
     }
 
 }

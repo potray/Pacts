@@ -222,4 +222,8 @@ public class Pact {
     public String getDescription() {
         return description;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

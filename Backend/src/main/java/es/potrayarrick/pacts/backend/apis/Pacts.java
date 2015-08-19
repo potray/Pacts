@@ -82,6 +82,38 @@ public class Pacts {
         ofy().save().entity(receiver);
     }
 
+    @ApiMethod(name = "pactAction")
+    public final void pactAction (@Named("pactId") Long pactId,
+                                  @Named("action") String action){
+        // Get pact.
+        Pact pact = ofy().load().type(Pact.class).id(pactId).now();
+
+        switch (action){
+            case "ACCEPT":
+                // Get the sender and the receiver of the pact requests.
+                PactRequest request = ofy().load().type(PactRequest.class).filterKey("=", Key.create(pact)).list().get(0);
+                User sender = request.getSender();
+                User receiver = request.getReceiver();
+
+                // Delete the request
+                sender.deleteSentPactRequest(request);
+                receiver.deleteReceivedPactRequest(request);
+                ofy().delete().entity(request).now();
+                ofy().save().entity(sender).now();
+                ofy().save().entity(receiver).now();
+
+                pact.accept();
+                break;
+            case "CANCEL":
+                break;
+            case "FULFILL":
+                break;
+        }
+
+        ofy().save().entity(pact).now();
+
+    }
+
     /**
      * Get the received pact requests of an user.
      *

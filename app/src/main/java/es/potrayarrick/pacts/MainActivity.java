@@ -256,11 +256,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(final Uri uri) {
-
-    }
-
-    @Override
     public final void onMenuClick(final String action) {
         switch (action) {
             case FriendsFragment.OnFriendsFragmentInteractionListener.SHOW_FRIEND_REQUEST_FRAGMENT:
@@ -429,6 +424,16 @@ public class MainActivity extends AppCompatActivity implements
      */
     public final String getUserEmail (){
         return mEmail;
+    }
+
+    @Override
+    public void onAcceptPact(Long pactId) {
+        //mPactsService.
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
 

@@ -2,7 +2,6 @@ package es.potrayarrick.pacts;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -121,7 +120,7 @@ public class PactFragment extends Fragment {
             acceptPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    mListener.onAcceptPact(mPact.getId());
                 }
             });
         }
@@ -147,11 +146,10 @@ public class PactFragment extends Fragment {
     }
 
     /**
-     * An
+     * An interface to communicate with {@link MainActivity}.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onAcceptPact(Long pactId);
     }
 
 }

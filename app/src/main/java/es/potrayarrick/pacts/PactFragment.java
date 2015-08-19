@@ -3,6 +3,8 @@ package es.potrayarrick.pacts;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -70,6 +72,14 @@ public class PactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pact, container, false);
+
+        // Add back button to the action bar
+        setHasOptionsMenu(true);
+        ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionbar != null) {
+            setHasOptionsMenu(true);
+            actionbar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // UI elements
         TextView pactTypeAndUserView = (TextView) view.findViewById(R.id.pact_type_and_user);

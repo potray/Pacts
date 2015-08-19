@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Stack;
 
 import backend.pacts.potrayarrick.es.friends.Friends;
 import backend.pacts.potrayarrick.es.friends.model.FriendRequest;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Used to store previous fragment title.
      */
-    private CharSequence mPreviousTitle;
+    private Stack<String> mPreviousTitleStack;
 
 //region Fragments
 
@@ -140,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mPreviousTitleStack = new Stack<>();
 
         //Create fragments
         mProfileFragment = new ProfileFragment();
@@ -236,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements
             }
             // Pop fragment and restore previous title.
             getFragmentManager().popBackStack();
-            mTitle = mPreviousTitle;
+            mTitle = mPreviousTitleStack.pop();
             restoreActionBar();
         }
     }
@@ -413,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements
         // The fragment will have a back button instead of a drawer button.
         mNavigationDrawerFragment.toggleDrawerUse(false);
         // Change action bar title
-        mPreviousTitle = mTitle;
+        mPreviousTitleStack.push(mTitle.toString());
         mTitle = newMenuTitle;
         restoreActionBar();
     }

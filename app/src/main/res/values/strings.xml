@@ -72,6 +72,7 @@
     <string name="pact_info_fulfill_date">Fulfilled on</string>
     <string name="pact_info_cancel_date">Canceled on</string>
     <string name="action_accept_pact">Accept pact</string>
+    <string name="action_reject_pact">Reject pact</string>
 
 
 </resources>

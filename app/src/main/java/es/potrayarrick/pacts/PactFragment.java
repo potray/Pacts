@@ -5,10 +5,12 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class PactFragment extends Fragment {
 
     private Pact mPact;
 
-    private OnFragmentInteractionListener mListener;
+    private OnPactFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -120,7 +122,7 @@ public class PactFragment extends Fragment {
             acceptPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onAcceptPact(mPact.getId());
+                    mListener.onAcceptPact(mPact);
                 }
             });
         }
@@ -132,10 +134,10 @@ public class PactFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnPactFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnPactRequestsInteractionListener");
+                    + " must implement OnPactFragmentInteractionListener");
         }
     }
 
@@ -145,11 +147,35 @@ public class PactFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void pactAccepted(){
+        // Hide the "pact not accepted" section.
+        View view = getView();
+        if (view != null) {
+            view.findViewById(R.id.pact_not_accepted_layout).setVisibility(View.INVISIBLE);
+
+            // Show a toast.
+            Toast toast = Toast.makeText(view.getContext(), R.string.info_pact_accepted, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+    }
+
     /**
      * An interface to communicate with {@link MainActivity}.
      */
-    public interface OnFragmentInteractionListener {
-        void onAcceptPact(Long pactId);
+    public interface OnPactFragmentInteractionListener {
+        void onAcceptPact(Pact pact);
     }
 
 }

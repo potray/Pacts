@@ -4,12 +4,12 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.cmd.Query;
 
 import java.util.ArrayList;
 
 import javax.inject.Named;
 
+import es.potrayarrick.pacts.backend.Utils.Message;
 import es.potrayarrick.pacts.backend.models.Pact;
 import es.potrayarrick.pacts.backend.models.PactRequest;
 import es.potrayarrick.pacts.backend.models.PactType;
@@ -84,7 +84,7 @@ public class Pacts {
     }
 
     @ApiMethod(name = "pactAction")
-    public final void pactAction (@Named("pactId") Long pactId,
+    public final Message pactAction (@Named("pactId") Long pactId,
                                   @Named("action") String action){
         // Get pact.
         Pact pact = ofy().load().type(Pact.class).id(pactId).now();
@@ -93,25 +93,22 @@ public class Pacts {
             case "ACCEPT":
                 // Get the sender and the receiver of the pact requests.
                 Key<Pact> pactKey = Key.create(pact);
-                System.out.println(pactKey.toString());
-                Query<PactRequest> query = ofy().load().type(PactRequest.class).filter("pact", pactKey);
-                System.out.println(query.toString());
-                PactRequest request = query.first().now();
-                if (request != null) {
-                    User sender = request.getSender();
-                    User receiver = request.getReceiver();
+                PactRequest request = ofy().load().type(PactRequest.class).filter("pact", pactKey).first().now();
 
-                    // Delete the request
-                    sender.deleteSentPactRequest(request);
-                    receiver.deleteReceivedPactRequest(request);
-                    ofy().delete().entity(request).now();
-                    ofy().save().entity(sender).now();
-                    ofy().save().entity(receiver).now();
+                User sender = request.getSender();
+                User receiver = request.getReceiver();
 
-                    pact.accept();
-                } else {
-                    System.out.println("Request was null!");
-                }
+                // Add pact to the receiver.
+                receiver.addPact(pact);
+
+                // Delete the request
+                sender.deleteSentPactRequest(request);
+                receiver.deleteReceivedPactRequest(request);
+                ofy().delete().entity(request).now();
+                ofy().save().entity(sender).now();
+                ofy().save().entity(receiver).now();
+
+                pact.accept();
                 break;
             case "CANCEL":
                 break;
@@ -120,6 +117,7 @@ public class Pacts {
         }
 
         ofy().save().entity(pact).now();
+        return new Message(Message.SUCCESS);
 
     }
 

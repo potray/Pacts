@@ -64,11 +64,11 @@ public class PactsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPacts = new ArrayList<>();
         if (getArguments() != null) {
             ArrayList<Pact> pactsArg = (ArrayList<Pact>) getArguments().getSerializable(ARG_PACTS);
             if (pactsArg != null) {
                 Log.d(TAG, "onCreate - pactArgs = " + pactsArg.toString());
-                mPacts = new ArrayList<>();
                 mPacts.addAll(pactsArg);
             }
             mHidePactRequestButton = getArguments().getBoolean(ARG_HIDE_PACT_REQUESTS_MENU);
@@ -152,6 +152,16 @@ public class PactsFragment extends Fragment {
             mListener.onMenuPactsRequests();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setHidePactRequestButton (boolean hide){
+        mHidePactRequestButton = hide;
+    }
+
+    public void addPact (Pact pact){
+        if (mPacts != null){
+            mPacts.add(pact);
+        }
     }
 
     /**

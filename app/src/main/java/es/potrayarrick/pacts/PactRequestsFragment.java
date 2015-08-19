@@ -139,6 +139,23 @@ public class PactRequestsFragment extends Fragment {
     }
 
     /**
+     * Deletes a pact request from the list.
+     * @param pact the pact.
+     * @return true if {@link #mPactRequests} is empty, so {@link PactsFragment} can hide the
+     * notification menu.
+     * @see PactsFragment#setHidePactRequestButton(boolean)
+     */
+    public boolean deletePactRequest(Pact pact){
+        for (PactRequest pactRequest : mPactRequests){
+            if (pactRequest.getPact().getId().equals(pact.getId())) {
+                mPactRequests.remove(pactRequest);
+            }
+        }
+
+        return mPactRequests.isEmpty();
+    }
+
+    /**
      * An interface to communicate with {@link MainActivity}.
      */
     public interface OnPactRequestsInteractionListener {

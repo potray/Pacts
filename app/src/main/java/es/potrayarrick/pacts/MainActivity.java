@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
         CreatePactFragment.OnCreatePactInteractionListener,
         CreatePactTypeDialogFragment.OnCreatePactTypeDialogFragmentInteractionListener,
         PactRequestsFragment.OnPactRequestsInteractionListener,
-        PactFragment.OnFragmentInteractionListener{
+        PactFragment.OnPactFragmentInteractionListener {
 
     /**
      * A debugging tag.
@@ -427,8 +427,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onAcceptPact(Long pactId) {
-        PactActionAsyncTask task = new PactActionAsyncTask(pactId, "ACCEPT");
+    public void onAcceptPact(Pact pact) {
+        PactActionAsyncTask task = new PactActionAsyncTask(pact, "ACCEPT");
         task.execute();
 
 
@@ -617,11 +617,11 @@ public class MainActivity extends AppCompatActivity implements
 
     private class PactActionAsyncTask extends AsyncTask<Void, Void, Void>{
 
-        private Long pactId;
+        private Pact pact;
         private String action;
 
-        protected PactActionAsyncTask (Long pactId, String action) {
-            this.pactId = pactId;
+        protected PactActionAsyncTask (Pact pact, String action) {
+            this.pact = pact;
             this.action = action;
         }
 
@@ -632,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements
             mPactsService = Utils.setUpPactsService();
 
             try {
-                mPactsService.pactAction(pactId, action).execute();
+                mPactsService.pactAction(pact.getId(), action).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -644,8 +644,11 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(Void aVoid) {
             switch (action){
                 case "ACCEPT":
-                    // TODO delete the request, put the pact in pacts and friend fragments.
-                    Log.d(TAG, "onPostExecute ");
+                    mPactsFragment.setHidePactRequestButton(mPactRequestsFragment.deletePactRequest(pact));
+                    mPactsFragment.addPact(pact);
+                    mPactFragment.pactAccepted();
+
+                    // Update the arguments
                     break;
                 case "CANCEL":
                     break;

@@ -2,6 +2,7 @@ package es.potrayarrick.pacts.backend.models;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Index;
 
 
 import static es.potrayarrick.pacts.backend.OfyService.ofy;
@@ -11,6 +12,7 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
  */
 @Entity
 public class PactRequest extends FriendRequest{
+    @Index
     private Key<Pact> pact;
 
     /**

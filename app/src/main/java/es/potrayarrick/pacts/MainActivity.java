@@ -428,7 +428,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onAcceptPact(Long pactId) {
-        //mPactsService.
+        PactActionAsyncTask task = new PactActionAsyncTask(pactId, "ACCEPT");
+        task.execute();
+
+
+
     }
 
     @Override
@@ -607,6 +611,46 @@ public class MainActivity extends AppCompatActivity implements
                     toast = Toast.makeText(getApplicationContext(), R.string.info_user_request_rejected, Toast.LENGTH_SHORT);
                 }
                 toast.show();
+            }
+        }
+    }
+
+    private class PactActionAsyncTask extends AsyncTask<Void, Void, Void>{
+
+        private Long pactId;
+        private String action;
+
+        protected PactActionAsyncTask (Long pactId, String action) {
+            this.pactId = pactId;
+            this.action = action;
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // Set up the pact service (it could be null).
+            mPactsService = Utils.setUpPactsService();
+
+            try {
+                mPactsService.pactAction(pactId, action).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            switch (action){
+                case "ACCEPT":
+                    // TODO delete the request, put the pact in pacts and friend fragments.
+                    Log.d(TAG, "onPostExecute ");
+                    break;
+                case "CANCEL":
+                    break;
+                case "FULFILL":
+                    break;
             }
         }
     }

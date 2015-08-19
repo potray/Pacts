@@ -4,6 +4,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.cmd.Query;
 
 import java.util.ArrayList;
 
@@ -91,18 +92,26 @@ public class Pacts {
         switch (action){
             case "ACCEPT":
                 // Get the sender and the receiver of the pact requests.
-                PactRequest request = ofy().load().type(PactRequest.class).filterKey("=", Key.create(pact)).list().get(0);
-                User sender = request.getSender();
-                User receiver = request.getReceiver();
+                Key<Pact> pactKey = Key.create(pact);
+                System.out.println(pactKey.toString());
+                Query<PactRequest> query = ofy().load().type(PactRequest.class).filter("pact", pactKey);
+                System.out.println(query.toString());
+                PactRequest request = query.first().now();
+                if (request != null) {
+                    User sender = request.getSender();
+                    User receiver = request.getReceiver();
 
-                // Delete the request
-                sender.deleteSentPactRequest(request);
-                receiver.deleteReceivedPactRequest(request);
-                ofy().delete().entity(request).now();
-                ofy().save().entity(sender).now();
-                ofy().save().entity(receiver).now();
+                    // Delete the request
+                    sender.deleteSentPactRequest(request);
+                    receiver.deleteReceivedPactRequest(request);
+                    ofy().delete().entity(request).now();
+                    ofy().save().entity(sender).now();
+                    ofy().save().entity(receiver).now();
 
-                pact.accept();
+                    pact.accept();
+                } else {
+                    System.out.println("Request was null!");
+                }
                 break;
             case "CANCEL":
                 break;

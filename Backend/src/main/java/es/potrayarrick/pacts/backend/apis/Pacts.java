@@ -89,19 +89,19 @@ public class Pacts {
         // Get pact.
         Pact pact = ofy().load().type(Pact.class).id(pactId).now();
 
+        // Get the sender and the receiver of the pact requests.
+        Key<Pact> pactKey = Key.create(pact);
+        PactRequest request = ofy().load().type(PactRequest.class).filter("pact", pactKey).first().now();
+
+        User sender = request.getSender();
+        User receiver = request.getReceiver();
+
         switch (action){
             case "ACCEPT":
-                // Get the sender and the receiver of the pact requests.
-                Key<Pact> pactKey = Key.create(pact);
-                PactRequest request = ofy().load().type(PactRequest.class).filter("pact", pactKey).first().now();
-
-                User sender = request.getSender();
-                User receiver = request.getReceiver();
-
                 // Add pact to the receiver.
                 receiver.addPact(pact);
 
-                // Delete the request
+                // Delete the request.
                 sender.deleteSentPactRequest(request);
                 receiver.deleteReceivedPactRequest(request);
                 ofy().delete().entity(request).now();
@@ -110,7 +110,18 @@ public class Pacts {
 
                 pact.accept();
                 break;
-            case "CANCEL":
+            case "REJECT":
+                // Delete the request.
+                sender.deleteSentPactRequest(request);
+                receiver.deleteReceivedPactRequest(request);
+                ofy().delete().entity(request).now();
+                ofy().save().entity(sender).now();
+                ofy().save().entity(receiver).now();
+
+                // Delete the pact.
+                ofy().delete().entity(pact);
+
+                // TODO send notification to the sender.
                 break;
             case "FULFILL":
                 break;

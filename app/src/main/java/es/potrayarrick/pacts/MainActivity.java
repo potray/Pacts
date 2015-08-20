@@ -648,17 +648,24 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            boolean hidePactRequestButton = false;
             switch (action){
                 case "ACCEPT":
-                    mPactsFragment.setHidePactRequestButton(mPactRequestsFragment.deletePactRequest(pact));
+                    hidePactRequestButton = mPactRequestsFragment.deletePactRequest(pact);
                     mPactsFragment.addPact(pact);
-                    mPactFragment.pactAccepted();
+                    mPactFragment.pactRequestAnswered(true);
+
                     break;
                 case "REJECT":
-                    mPactsFragment.setHidePactRequestButton(mPactRequestsFragment.deletePactRequest(pact));
+                    hidePactRequestButton = mPactRequestsFragment.deletePactRequest(pact);
+                    mPactFragment.pactRequestAnswered(false);
                     break;
                 case "FULFILL":
                     break;
+            }
+
+            if (hidePactRequestButton){
+                mPactsFragment.setHidePactRequestButton(true);
             }
         }
     }

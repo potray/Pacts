@@ -66,11 +66,8 @@ public class PactsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mPacts = new ArrayList<>();
         if (getArguments() != null) {
-            ArrayList<Pact> pactsArg = (ArrayList<Pact>) getArguments().getSerializable(ARG_PACTS);
-            if (pactsArg != null) {
-                Log.d(TAG, "onCreate - pactArgs = " + pactsArg.toString());
-                mPacts.addAll(pactsArg);
-            }
+            mPacts = (ArrayList<Pact>) getArguments().getSerializable(ARG_PACTS);
+            Log.d(TAG, "onCreate - " + getArguments().toString());
             mHidePactRequestButton = getArguments().getBoolean(ARG_HIDE_PACT_REQUESTS_MENU);
         } else {
             Log.d(TAG, "onCreate - No arguments!");
@@ -155,13 +152,25 @@ public class PactsFragment extends Fragment {
     }
 
     public void setHidePactRequestButton (boolean hide){
+        Log.d(TAG, "setHidePactRequestButton " + hide);
+
+        // Update the argument of the fragment.
+        getArguments().putBoolean(ARG_HIDE_PACT_REQUESTS_MENU, hide);
+
         mHidePactRequestButton = hide;
     }
 
     public void addPact (Pact pact){
-        if (mPacts != null){
+        if (mPacts != null) {
+            // The fragment could be created and we need to update it.
+            mPacts.add(pact);
+        } else {
+            mPacts = new ArrayList<>();
             mPacts.add(pact);
         }
+
+        // Update the argument.
+        getArguments().putSerializable(ARG_PACTS, mPacts);
     }
 
     /**

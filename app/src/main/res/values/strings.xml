@@ -63,6 +63,7 @@
     <string name="info_pact_type_created">The pact type was created</string>
     <string name="info_pact_created">The pact was created</string>
     <string name="info_pact_accepted">The pact was accepted</string>
+    <string name="info_pact_rejected">The pact was rejected</string>
     <string name="error_no_pact_types">Create a pact type first</string>
     <string name="info_pact_request_not_accepted">This pact isn\'t accepted.</string>
     <!-- This is for getting sentences like "A blood pact with Peter" and then translate them-->

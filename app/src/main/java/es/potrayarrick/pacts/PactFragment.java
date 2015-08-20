@@ -178,17 +178,23 @@ public class PactFragment extends Fragment {
         }
     }
 
-    public void pactAccepted(){
+    public void pactRequestAnswered(boolean accepted){
         // Hide the "pact not accepted" section.
         View view = getView();
         if (view != null) {
             view.findViewById(R.id.pact_not_accepted_layout).setVisibility(View.INVISIBLE);
 
             // Show a toast.
-            Toast toast = Toast.makeText(view.getContext(), R.string.info_pact_accepted, Toast.LENGTH_SHORT);
+            Toast toast;
+
+            if (accepted) {
+                toast = Toast.makeText(view.getContext(), R.string.info_pact_accepted, Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(view.getContext(), R.string.info_pact_rejected, Toast.LENGTH_SHORT);
+            }
+
             toast.show();
         }
-
     }
 
     /**

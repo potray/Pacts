@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import backend.pacts.potrayarrick.es.pacts.model.PactRequest;
  */
 public class PactRequestsFragment extends Fragment {
     public static final String ARG_PACT_REQUESTS = "pact requests";
+    private static final String TAG = "PactRequestsFragment";
 
     private ArrayList<PactRequest> mPactRequests;
 
@@ -56,6 +58,7 @@ public class PactRequestsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            Log.d(TAG, "onCreate - " + getArguments().toString());
             mPactRequests = (ArrayList<PactRequest>) getArguments().getSerializable(ARG_PACT_REQUESTS);
         }
     }

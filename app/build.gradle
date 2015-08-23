@@ -9,8 +9,8 @@ android {
         applicationId "es.potrayarrick.pacts"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 4
-        versionName "Beta - Basic social network"
+        versionCode 5
+        versionName "Beta - Basic pacts functionality"
     }
     buildTypes {
         release {

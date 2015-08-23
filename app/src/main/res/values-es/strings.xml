@@ -43,4 +43,27 @@
     <string name="logout_confirmation">¿Realmente desea cerrar sesión?</string>
     <string name="no">No</string>
     <string name="yes">Si</string>
+    <string name="action_accept_pact">Aceptar pacto</string>
+    <string name="action_create_pact">Crear pacto</string>
+    <string name="action_create_pact_type">Crear tipo</string>
+    <string name="action_reject_pact">Rechazar pacto</string>
+    <string name="action_view_pact_requests">Solicitudes de pacto</string>
+    <string name="create">Crear</string>
+    <string name="create_pact_type">Crear tipo</string>
+    <string name="error_no_pact_types">Crea un tipo de pacto primero</string>
+    <string name="info_pact_accepted">El pacto ha sido aceptado</string>
+    <string name="info_pact_created">El pacto ha sido creado</string>
+    <string name="info_pact_rejected">El pacot ha sido rechazado</string>
+    <string name="info_pact_request_not_accepted">Este pacto no ha sido aceptado</string>
+    <string name="info_pact_type_created">El tipo de pacto ha sido creado</string>
+    <string name="pact_description">Descripción</string>
+    <string name="pact_info_cancel_date">Cancelado el</string>
+    <string name="pact_info_creation_date">Creado el</string>
+    <string name="pact_info_fulfill_date">Cumplido el</string>
+    <string name="pact_is_promise">¿Es una promesa?</string>
+    <string name="pact_name">Nombre</string>
+    <string name="pact_type_and_user_intro">Un pacto de</string>
+    <string name="pact_type_and_user_middle">con</string>
+    <string name="select_pact_type">Selecciona tipo</string>
+    <string name="type">Tipo</string>
 </resources>

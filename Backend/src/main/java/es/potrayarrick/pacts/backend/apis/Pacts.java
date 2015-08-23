@@ -83,9 +83,15 @@ public class Pacts {
         ofy().save().entity(receiver);
     }
 
+    /**
+     * Performs an action on a pact.
+     * @param pactId the id of the pact to perform the action.
+     * @param action the action to perform.
+     * @return a success message.
+     */
     @ApiMethod(name = "pactAction")
-    public final Message pactAction (@Named("pactId") Long pactId,
-                                  @Named("action") String action){
+    public final Message pactAction(@Named("pactId") final Long pactId,
+                                  @Named("action") final String action) {
         // Get pact.
         Pact pact = ofy().load().type(Pact.class).id(pactId).now();
 
@@ -96,7 +102,7 @@ public class Pacts {
         User sender = request.getSender();
         User receiver = request.getReceiver();
 
-        switch (action){
+        switch (action) {
             case "ACCEPT":
                 // Add pact to the receiver.
                 receiver.addPact(pact);
@@ -124,6 +130,8 @@ public class Pacts {
                 // TODO send notification to the sender.
                 break;
             case "FULFILL":
+                break;
+            default:
                 break;
         }
 

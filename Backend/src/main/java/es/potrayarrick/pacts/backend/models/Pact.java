@@ -39,6 +39,7 @@ public class Pact {
 
     /**
      * The type of the pact. Null if {@link #isPromise} = true.
+     *
      * @see PactType
      */
     private String type;
@@ -85,16 +86,17 @@ public class Pact {
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
-    public Pact() { }
-
+    public Pact() {
+    }
 
 
     /**
      * Default constructor.
-     * @param name the pact name.
+     *
+     * @param name        the pact name.
      * @param description the pact description.
-     * @param user1 the first user of the pact.
-     * @param user2 the second user of the pact.
+     * @param user1       the first user of the pact.
+     * @param user2       the second user of the pact.
      */
     public Pact(final String name, final String description, final User user1, final User user2) {
         this.name = name;
@@ -109,6 +111,7 @@ public class Pact {
 
     /**
      * Sets the description.
+     *
      * @param description the new description.
      */
     public final void setDescription(final String description) {
@@ -117,6 +120,7 @@ public class Pact {
 
     /**
      * Sets the is promise.
+     *
      * @param isPromise the new value.
      */
     public final void setPromise(final boolean isPromise) {
@@ -129,6 +133,7 @@ public class Pact {
 
     /**
      * Sets the pact type.
+     *
      * @param type the new type.
      */
     public final void setType(final PactType type) {
@@ -137,20 +142,39 @@ public class Pact {
         isPromise = false;
     }
 
-    public boolean isAccepted() {
+    /**
+     * Gets {@link #isAccepted}.
+     *
+     * @return {@link #isAccepted}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final boolean isAccepted() {
         return isAccepted;
     }
 
-    public boolean isBroken() {
+    /**
+     * Gets {@link #isBroken}.
+     *
+     * @return {@link #isBroken}.
+     */
+    public final boolean isBroken() {
         return isBroken;
     }
 
-    public boolean isPromise() {
+    /**
+     * Gets {@link #isPromise}.
+     *
+     * @return {@link #isPromise}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final boolean isPromise() {
         return isPromise;
     }
 
-    public final void accept(){
-
+    /**
+     * Accepts the pact.
+     */
+    public final void accept() {
         isAccepted = true;
     }
 
@@ -172,6 +196,7 @@ public class Pact {
 
     /**
      * Gets the email of the user 1.
+     *
      * @return the email of the user1.
      */
     @SuppressWarnings("unused") // This is for the client.
@@ -181,6 +206,7 @@ public class Pact {
 
     /**
      * Gets the complete name of the user 1.
+     *
      * @return the name and the surname of the user1.
      */
     @SuppressWarnings("unused") // This is for the client.
@@ -191,6 +217,7 @@ public class Pact {
 
     /**
      * Gets the complete name of the user 2.
+     *
      * @return the name and the surname of the user1.
      */
     @SuppressWarnings("unused") // This is for the client.
@@ -199,31 +226,73 @@ public class Pact {
         return (user.getName() + " " + user.getSurname());
     }
 
+    /**
+     * Gets {@link #name}.
+     *
+     * @return {@link #name}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
     public final String getName() {
         return this.name;
     }
 
+    /**
+     * Gets {@link #type}.
+     *
+     * @return {@link #type}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
     public final String getType() {
         return type;
     }
 
-    public Date getBrokenDate() {
+    /**
+     * Gets {@link #brokenDate}.
+     *
+     * @return {@link #brokenDate}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final Date getBrokenDate() {
         return brokenDate;
     }
 
-    public Date getFulfillDate() {
+    /**
+     * Gets {@link #fulfillDate}.
+     *
+     * @return {@link #fulfillDate}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final Date getFulfillDate() {
         return fulfillDate;
     }
 
-    public Date getCreationDate() {
+    /**
+     * Gets {@link #creationDate}.
+     *
+     * @return {@link #creationDate}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final Date getCreationDate() {
         return creationDate;
     }
 
-    public String getDescription() {
+    /**
+     * Gets {@link #description}.
+     *
+     * @return {@link #description}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final String getDescription() {
         return description;
     }
 
-    public Long getId() {
+    /**
+     * Gets {@link #name}.
+     *
+     * @return {@link #name}.
+     */
+    @SuppressWarnings("unused") // The client uses this.
+    public final Long getId() {
         return id;
     }
 }

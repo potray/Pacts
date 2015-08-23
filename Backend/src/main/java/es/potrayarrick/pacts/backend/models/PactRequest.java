@@ -22,13 +22,15 @@ public class PactRequest extends FriendRequest {
      * Empty constructor for Objectify.
      */
     @SuppressWarnings("unused")
-    public PactRequest() { }
+    public PactRequest() {
+    }
 
     /**
      * Default constructor.
-     * @param sender request sender.
+     *
+     * @param sender   request sender.
      * @param receiver request receiver.
-     * @param pact the pact.
+     * @param pact     the pact.
      */
     public PactRequest(final Key<User> sender, final Key<User> receiver, final Pact pact) {
         super(sender, receiver);
@@ -37,6 +39,7 @@ public class PactRequest extends FriendRequest {
 
     /**
      * Gets {@link #pact}.
+     *
      * @return {@link #pact}.
      */
     public final Pact getPact() {

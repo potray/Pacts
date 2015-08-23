@@ -330,17 +330,19 @@ public class User {
 
     /**
      * Adds a pact to the user.
+     *
      * @param pact the pact to add.
      */
-    public final void addPact (final Pact pact){
+    public final void addPact(final Pact pact) {
         pacts.add(Key.create(pact));
     }
 
     /**
      * Removes a pact from the user.
+     *
      * @param pact the pact to remove.
      */
-    public final void removePact (final Pact pact){
+    public final void removePact(final Pact pact) {
         pacts.remove(Key.create(pact));
     }
 }

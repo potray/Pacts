@@ -61,7 +61,7 @@ public class FriendsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param friends a list with the user's friends.
+     * @param friends          a list with the user's friends.
      * @param showRequestsMenu whether or not the friend requests menu button should be hidden.
      * @return A new instance of fragment FriendsFragment.
      */
@@ -92,19 +92,22 @@ public class FriendsFragment extends Fragment {
 
         /**
          * Tells {@link MainActivity} to do an action.
+         *
          * @param action the action to do.
          */
         void onMenuClick(String action);
 
         /**
          * Tells {@link MainActivity} to show the friend fragment.
+         *
          * @param friend the friend with the info to populate the fragment.
          */
-        void onFriendClick (User friend);
+        void onFriendClick(User friend);
     }
 
     /**
      * Add a friend to {@link #mFriends}.
+     *
      * @param friend the friend to add.
      */
     public final void addFriend(final User friend) {
@@ -113,6 +116,7 @@ public class FriendsFragment extends Fragment {
 
     /**
      * Delete a friend from {@link #mFriends}.
+     *
      * @param friend the friend to Delete.
      */
     public final void deleteFriend(final User friend) {
@@ -121,6 +125,7 @@ public class FriendsFragment extends Fragment {
 
     /**
      * Sets {@link #mHideFriendRequestsMenu}.
+     *
      * @param hide the new {@link #mHideFriendRequestsMenu}.
      */
     public final void setHideFriendRequestMenu(final boolean hide) {
@@ -146,7 +151,7 @@ public class FriendsFragment extends Fragment {
 
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+                                   final Bundle savedInstanceState) {
         // We have a menu in this fragment.
         setHasOptionsMenu(true);
 
@@ -213,6 +218,7 @@ public class FriendsFragment extends Fragment {
 
     /**
      * Tells {@link #mListener} to communicate with {@link MainActivity}.
+     *
      * @param action the action {@link MainActivity} should perform.
      */
     public final void onFriendRequestsMenuItemClick(final String action) {
@@ -253,8 +259,9 @@ public class FriendsFragment extends Fragment {
 
         /**
          * Default constructor.
-         * @param context the context of the view.
-         * @param viewId the id of the layout to inflate.
+         *
+         * @param context     the context of the view.
+         * @param viewId      the id of the layout to inflate.
          * @param friendNames a list with the user's friends' names.
          */
         public FriendsArrayAdapter(final Context context, final int viewId, final ArrayList<String> friendNames) {

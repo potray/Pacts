@@ -120,10 +120,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
     /**
-     * The task for retrieving user info from backend.
-     */
-    private UserInfoTask mUserInfoTask;
-    /**
      * The task for sending friend requests responses to backend.
      */
     private ManageFriendRequestTask mManageFriendRequestTask;
@@ -164,7 +160,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // Set up services
         mEmail = getSharedPreferences(Utils.PREFS_NAME, 0).getString(Utils.Strings.USER_EMAIL, "");
-        mUserInfoTask = new UserInfoTask(mEmail);
+
+        UserInfoTask mUserInfoTask = new UserInfoTask(mEmail);
         mUserInfoTask.execute();
         mManageFriendRequestTask = new ManageFriendRequestTask();
 
@@ -233,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             this.finish();
         } else {
-            if (getFragmentManager().getBackStackEntryCount() == 1){
+            if (getFragmentManager().getBackStackEntryCount() == 1) {
                 // We start using the drawer again.
                 mNavigationDrawerFragment.toggleDrawerUse(true);
             }
@@ -308,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public final void onFriendRequestInteraction(final FriendRequest request, final String message) {
         mManageFriendRequestTask.execute(new Pair<>(request, message));
     }
@@ -325,20 +323,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onMenuPactsRequests() {
+    public final void onMenuPactsRequests() {
         // Show the pact requests fragment.
         hideDrawer(getString(R.string.action_view_pact_requests));
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactRequestsFragment).addToBackStack(null).commit();
     }
 
     @Override
-    public void onPact(Pact pact) {
+    public final void onPact(final Pact pact) {
         showPact(pact);
     }
 
 
     @Override
-    public void onPactRequestItemPressed(Pact pact) {
+    public final void onPactRequestItemPressed(final Pact pact) {
         showPact(pact);
     }
 //endregion
@@ -405,7 +403,7 @@ public class MainActivity extends AppCompatActivity implements
      * Shows the pact fragment populated with a pact information.
      * @param pact the pact.
      */
-    private void showPact (Pact pact) {
+    private void showPact(final Pact pact) {
         // Set the pact fragment arguments and show it.
         hideDrawer(pact.getName());
 
@@ -438,24 +436,24 @@ public class MainActivity extends AppCompatActivity implements
      * A fragment could require the user email, so this enables it to not use SharedPreferences.
      * @return the user's email.
      */
-    public final String getUserEmail (){
+    public final String getUserEmail() {
         return mEmail;
     }
 
     @Override
-    public void onAcceptPact(Pact pact) {
+    public final void onAcceptPact(final Pact pact) {
         PactActionAsyncTask task = new PactActionAsyncTask(pact, "ACCEPT");
         task.execute();
     }
 
     @Override
-    public void onRejectPact(Pact pact) {
+    public final void onRejectPact(final Pact pact) {
         PactActionAsyncTask task = new PactActionAsyncTask(pact, "REJECT");
         task.execute();
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(final Uri uri) {
 
     }
 
@@ -535,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements
                     ArrayList<Pact> pacts = new ArrayList<>();
                     Log.d(TAG, "doInBackground - pactsItems = " + pactsItems.toString());
 
-                    for (Pact pact : pactsItems){
+                    for (Pact pact : pactsItems) {
                         pacts.add(pact);
                     }
 
@@ -570,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
+        protected void onPostExecute(final Boolean aBoolean) {
             //Load the pacts fragment
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
         }
@@ -634,19 +632,32 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private class PactActionAsyncTask extends AsyncTask<Void, Void, Void>{
-
+    /**
+     * An AsyncTask for performing an action on a pact.
+     */
+    private class PactActionAsyncTask extends AsyncTask<Void, Void, Void> {
+        /**
+         * The pact to perform the action on.
+         */
         private Pact pact;
+        /**
+         * The action to perform.
+         */
         private String action;
 
-        protected PactActionAsyncTask (Pact pact, String action) {
+        /**
+         * The constructor.
+         * @param pact the pact.
+         * @param action the action.
+         */
+        protected PactActionAsyncTask(final Pact pact, final String action) {
             this.pact = pact;
             this.action = action;
         }
 
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(final Void... params) {
             // Set up the pact service (it could be null).
             mPactsService = Utils.setUpPactsService();
 
@@ -660,14 +671,13 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(final Void aVoid) {
             boolean hidePactRequestButton = false;
-            switch (action){
+            switch (action) {
                 case "ACCEPT":
                     hidePactRequestButton = mPactRequestsFragment.deletePactRequest(pact);
                     mPactsFragment.addPact(pact);
                     mPactFragment.pactRequestAnswered(true);
-
                     break;
                 case "REJECT":
                     hidePactRequestButton = mPactRequestsFragment.deletePactRequest(pact);
@@ -675,9 +685,11 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case "FULFILL":
                     break;
+                default:
+                    break;
             }
 
-            if (hidePactRequestButton){
+            if (hidePactRequestButton) {
                 mPactsFragment.setHidePactRequestButton(true);
             }
         }

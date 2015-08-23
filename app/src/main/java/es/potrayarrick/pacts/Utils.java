@@ -32,10 +32,12 @@ public final class Utils {
     /**
      * Private constructor to prevent instances.
      */
-    private Utils() { }
+    private Utils() {
+    }
 
     /**
      * Validates the format of an email.
+     *
      * @param email the email to validate.
      * @return true if it's a valid email, false if not.
      */
@@ -47,6 +49,7 @@ public final class Utils {
 
     /**
      * Validates the format of a password.
+     *
      * @param password the password to validate.
      * @return true if the password is 8 or more characters long, false if not.
      */
@@ -82,9 +85,15 @@ public final class Utils {
         /**
          * Private constructor to prevent instances.
          */
-        private Strings() { }
+        private Strings() {
+        }
     }
 
+    /**
+     * Sets up a pact service.
+     *
+     * @return the service.
+     */
     public static Pacts setUpPactsService() {
         Pacts.Builder builder;
         if (Utils.LOCAL_TESTING) {

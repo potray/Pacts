@@ -185,10 +185,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         /**
          * Default constructor.
-         * @param email new user email.
+         *
+         * @param email    new user email.
          * @param password new user password.
-         * @param name new user name.
-         * @param surname new user surname.
+         * @param name     new user name.
+         * @param surname  new user surname.
          */
         UserRegistrationTask(final String email, final String password, final String name, final String surname) {
             this.email = email;
@@ -230,6 +231,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
             return true;
         }
+
         @Override
         protected final void onPostExecute(final Boolean success) {
             mUserRegistrationTask = null;

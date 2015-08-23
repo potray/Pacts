@@ -102,9 +102,10 @@ public class SendFriendRequestDialogFragment extends DialogFragment {
 
         /**
          * Default constructor.
+         *
          * @param receiverEmail the email of the receiver.
-         * @param senderEmail the email of the sender.
-         * @param context the context of the activity.
+         * @param senderEmail   the email of the sender.
+         * @param context       the context of the activity.
          */
         protected SendFriendRequestTask(final String receiverEmail, final String senderEmail, final Context context) {
             this.receiverEmail = receiverEmail;

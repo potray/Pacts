@@ -175,6 +175,7 @@ public class PactsFragment extends Fragment {
 
     /**
      * Sets {@link #mHidePactRequestButton}.
+     *
      * @param hide the new {@link #mHidePactRequestButton}.
      */
     public final void setHidePactRequestButton(final boolean hide) {
@@ -188,6 +189,7 @@ public class PactsFragment extends Fragment {
 
     /**
      * Adds a pact to {@link #mPacts}.
+     *
      * @param pact the pact to add.
      */
     public final void addPact(final Pact pact) {
@@ -214,6 +216,7 @@ public class PactsFragment extends Fragment {
 
         /**
          * Triggers when a pact is pressed.
+         *
          * @param pact the pressed pact.
          */
         void onPactPressed(Pact pact);
@@ -249,8 +252,9 @@ public class PactsFragment extends Fragment {
 
         /**
          * The constructor.
+         *
          * @param context the context.
-         * @param items the items of the list.
+         * @param items   the items of the list.
          */
         public PactsAdapter(final Context context, final ArrayList<PactItem> items) {
             this.context = context;

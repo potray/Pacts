@@ -125,6 +125,7 @@ public class CreatePactFragment extends Fragment {
             mReceiverEmail = getArguments().getString(ARG_RECEIVER_EMAIL);
             mPactTypes = new ArrayList<>();
 
+            @SuppressWarnings("unchecked")
             ArrayList<String> argTypes = (ArrayList<String>) getArguments().getSerializable(ARG_PACT_TYPES);
             if (argTypes != null) {
                 Log.d(TAG, "onCreate");
@@ -137,6 +138,7 @@ public class CreatePactFragment extends Fragment {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                    final Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
@@ -337,14 +339,14 @@ public class CreatePactFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -383,7 +385,6 @@ public class CreatePactFragment extends Fragment {
 
             ArrayList<String> stringArgs = params[0].first;
             Log.d(TAG, "doInBackground " + stringArgs.toString());
-
 
             // We send all the data, the backend will know what to do with them.
             try {

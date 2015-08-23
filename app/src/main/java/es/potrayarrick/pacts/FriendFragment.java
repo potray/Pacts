@@ -20,20 +20,31 @@ import backend.pacts.potrayarrick.es.pacts.model.Pact;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnFriendFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FriendFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * The Friend fragment.
  */
 public class FriendFragment extends Fragment {
+    /**
+     * An argument name for {@link #newInstance(HashMap, ArrayList)} <code>friendInfo</code> parameter.
+     */
     public static final String ARG_FRIEND_INFO = "friend";
+    /**
+     * An argument name for {@link #newInstance(HashMap, ArrayList)} <code>pacts</code> parameter.
+     */
     public static final String ARG_PACTS = "pacts";
 
+    /**
+     * The friend.
+     */
     private User friend;
+
+    /**
+     * The pacts the user has with the friend.
+     */
     private ArrayList<Pact> pacts;
 
+    /**
+     * The instance of {@link es.potrayarrick.pacts.FriendFragment.OnFriendFragmentInteractionListener}.
+     */
     private OnFriendFragmentInteractionListener mListener;
 
     /**
@@ -41,11 +52,11 @@ public class FriendFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param friendInfo the info of the friend (name, surname...)
-     * @param pacts the pacts the user has with {@link #friend}
+     * @param pacts      the pacts the user has with {@link #friend}
      * @return A new instance of fragment FriendFragment.
      */
     @SuppressWarnings("unused")
-    public static FriendFragment newInstance(HashMap<String, String> friendInfo, ArrayList<Pact> pacts) {
+    public static FriendFragment newInstance(final HashMap<String, String> friendInfo, final ArrayList<Pact> pacts) {
         FriendFragment fragment = new FriendFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRIEND_INFO, friendInfo);
@@ -55,14 +66,16 @@ public class FriendFragment extends Fragment {
     }
 
     /**
-     * Required empty public constructor
+     * Required empty public constructor.
      */
-    public FriendFragment() { }
+    public FriendFragment() {
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            @SuppressWarnings("unchecked")
             HashMap<String, String> friendInfo = (HashMap<String, String>) getArguments().getSerializable(ARG_FRIEND_INFO);
             if (friendInfo != null) {
                 friend = new User();
@@ -74,8 +87,8 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                                   final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_friend, container, false);
 
@@ -89,14 +102,8 @@ public class FriendFragment extends Fragment {
         return view;
     }
 
-    public void onCreatePactPressed() {
-        if (mListener != null) {
-            mListener.onCreatePactMenuPressed(friend.getEmail());
-        }
-    }
-
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnFriendFragmentInteractionListener) activity;
@@ -107,7 +114,7 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
@@ -122,13 +129,13 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
             case R.id.menu_create_pact:
-                onCreatePactPressed();
+                mListener.onCreatePactMenuPressed(friend.getEmail());
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -136,17 +143,15 @@ public class FriendFragment extends Fragment {
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * An interface to communicate with {@link MainActivity}.
      */
     public interface OnFriendFragmentInteractionListener {
-        void onCreatePactMenuPressed(String senderEmail);
+        /**
+         * Triggered when the create pact menu button is pressed to send him a friend request.
+         *
+         * @param receiverEmail the email of the friend.
+         */
+        void onCreatePactMenuPressed(String receiverEmail);
     }
 
 }

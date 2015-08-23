@@ -41,6 +41,7 @@ public class FriendRequestFragment extends Fragment {
 
     /**
      * Use this factory method to create a new instance of this fragment using the provided parameters.
+     *
      * @param friendRequests A list with the received friend requests.
      * @return A new instance of fragment {@link FriendRequestFragment}.
      */
@@ -74,6 +75,7 @@ public class FriendRequestFragment extends Fragment {
 
         /**
          * Tells {@link MainActivity} to manage a friend request.
+         *
          * @param request the friend request to manage.
          * @param message either {@link #ACCEPT_REQUEST} or {@link #REJECT_REQUEST}.
          */
@@ -82,6 +84,7 @@ public class FriendRequestFragment extends Fragment {
 
     /**
      * Checks if {@link #mFriendRequests} is empty.
+     *
      * @return true if {@link #mFriendRequests} is empty, false if not.
      */
     public final boolean checkRequestCount() {
@@ -115,7 +118,7 @@ public class FriendRequestFragment extends Fragment {
 
         // Get friends name
         ArrayList<String> mFriendRequestSenderNames = new ArrayList<>();
-        for (FriendRequest request: mFriendRequests) {
+        for (FriendRequest request : mFriendRequests) {
             mFriendRequestSenderNames.add(request.getSender().getName() + " " + request.getSender().getSurname());
         }
 
@@ -144,18 +147,19 @@ public class FriendRequestFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
      * Deletes a friend request from {@link #mFriendRequests}.
+     *
      * @param request the request to delete.
      */
     public final void deleteRequest(final FriendRequest request) {
@@ -165,6 +169,7 @@ public class FriendRequestFragment extends Fragment {
 
     /**
      * Tells {@link #mListener} to communicate with {@link MainActivity}.
+     *
      * @param request a friend request to manage.
      * @param message either {@link FriendRequestFragment.OnFriendRequestFragmentInteractionListener#ACCEPT_REQUEST}
      *                or {@link FriendRequestFragment.OnFriendRequestFragmentInteractionListener#REJECT_REQUEST}.
@@ -186,8 +191,9 @@ public class FriendRequestFragment extends Fragment {
 
         /**
          * Default constructor.
+         *
          * @param context the context of the view.
-         * @param names A list of names to populate {@link #names}
+         * @param names   A list of names to populate {@link #names}
          */
         public FriendRequestsArrayAdapter(final Context context, final ArrayList<String> names) {
             super(context, R.layout.list_element_received_friend_request, names);
@@ -199,11 +205,11 @@ public class FriendRequestFragment extends Fragment {
         public View getView(final int position, final View convertView, final ViewGroup parent) {
             // Check if an existing view is being reused, otherwise inflate the view
             View view;
-                if (convertView == null) {
-                    view = LayoutInflater.from(getContext()).inflate(R.layout.list_element_received_friend_request, parent, false);
-                } else {
-                    view = convertView;
-                }
+            if (convertView == null) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.list_element_received_friend_request, parent, false);
+            } else {
+                view = convertView;
+            }
             // Populate the data
             TextView senderNameView = (TextView) view.findViewById(R.id.request_sender_name);
             senderNameView.setText(names.get(position));

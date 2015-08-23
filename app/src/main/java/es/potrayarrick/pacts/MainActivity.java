@@ -401,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * Shows the pact fragment populated with a pact information.
+     *
      * @param pact the pact.
      */
     private void showPact(final Pact pact) {
@@ -434,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * A fragment could require the user email, so this enables it to not use SharedPreferences.
+     *
      * @return the user's email.
      */
     public final String getUserEmail() {
@@ -647,7 +649,8 @@ public class MainActivity extends AppCompatActivity implements
 
         /**
          * The constructor.
-         * @param pact the pact.
+         *
+         * @param pact   the pact.
          * @param action the action.
          */
         protected PactActionAsyncTask(final Pact pact, final String action) {

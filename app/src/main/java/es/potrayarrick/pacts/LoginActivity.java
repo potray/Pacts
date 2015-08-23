@@ -48,7 +48,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      */
     private UserLoginTask mAuthTask;
     /**
-     *  The login service.
+     * The login service.
      */
     private static Login loginService = null;
     /**
@@ -73,7 +73,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * The form view, for hiding both email and password inputs.
      */
     private View mLoginFormView;
-
 
 
     @Override
@@ -196,6 +195,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     /**
      * Shows the progress UI and hides the login form.
+     *
      * @param show if true it shows the progress UI. If false it hides it.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -279,6 +279,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     /**
      * This method adds emails to the autocomplete list in the email input.
+     *
      * @param emailAddressCollection A list of emails to add.
      */
     private void addEmailsToAutoComplete(final List<String> emailAddressCollection) {
@@ -307,7 +308,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         /**
          * Default constructor.
-         * @param email email at the input field.
+         *
+         * @param email    email at the input field.
          * @param password password at the input field.
          */
         UserLoginTask(final String email, final String password) {

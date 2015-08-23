@@ -119,15 +119,16 @@ public class NavigationDrawerFragment extends Fragment {
 
     /**
      * Enable/Disable the icon being used by the drawer.
+     *
      * @param useDrawer whether or not to use the icon.
      */
-    public void toggleDrawerUse (boolean useDrawer) {
+    public void toggleDrawerUse(boolean useDrawer) {
         Log.d(TAG, "toggleDrawerUse " + String.valueOf(useDrawer));
         mDrawerToggle.setDrawerIndicatorEnabled(useDrawer);
-        if (useDrawer){
-            ((MainActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
-        }else{
-            ((MainActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(null);
+        if (useDrawer) {
+            ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+        } else {
+            ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(null);
         }
     }
 

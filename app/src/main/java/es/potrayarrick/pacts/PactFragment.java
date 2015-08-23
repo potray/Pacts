@@ -26,11 +26,23 @@ import backend.pacts.potrayarrick.es.pacts.model.Pact;
  * The pact fragment.
  */
 public class PactFragment extends Fragment {
-    public static final String ARG_PACT = "pact";
+    /**
+     * Debug tag.
+     */
     private static final String TAG = "PactFragment";
+    /**
+     * An argument name for {@link #newInstance(Pact)} <code>pact</code> parameter.
+     */
+    public static final String ARG_PACT = "pact";
 
+    /**
+     * The pact.
+     */
     private Pact mPact;
 
+    /**
+     * The instance of {@link es.potrayarrick.pacts.PactFragment.OnPactFragmentInteractionListener}.
+     */
     private OnPactFragmentInteractionListener mListener;
 
     /**
@@ -40,7 +52,8 @@ public class PactFragment extends Fragment {
      * @param pact The pact.
      * @return A new instance of fragment PactFragment.
      */
-    public static PactFragment newInstance(Pact pact) {
+    @SuppressWarnings("unused")
+    public static PactFragment newInstance(final Pact pact) {
         PactFragment fragment = new PactFragment();
         Bundle args = new Bundle();
         // We use an arraylist since it's automatically serialized.
@@ -54,12 +67,14 @@ public class PactFragment extends Fragment {
     /**
      * Required empty public constructor.
      */
-    public PactFragment() { }
+    public PactFragment() {
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            @SuppressWarnings("unchecked")
             ArrayList<Pact> pactArgument = (ArrayList<Pact>) getArguments().getSerializable(ARG_PACT);
             if (pactArgument != null) {
                 Log.d(TAG, "onCreate - pactArgument = " + pactArgument.toString());
@@ -69,7 +84,8 @@ public class PactFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                                   final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pact, container, false);
 
@@ -91,14 +107,14 @@ public class PactFragment extends Fragment {
         String pactTypeIntro = getString(R.string.pact_type_and_user_intro);
         String pactTypeMiddle = getString(R.string.pact_type_and_user_middle);
 
-        if (((MainActivity)getActivity()).getUserEmail().equals(mPact.getUser1Email())){
+        if (((MainActivity) getActivity()).getUserEmail().equals(mPact.getUser1Email())) {
             userName = mPact.getUser2CompleteName();
         } else {
             userName = mPact.getUser1CompleteName();
         }
 
-        String typeAndUser = pactTypeIntro + " " + mPact.getType() + " " +
-                pactTypeMiddle + " " + userName;
+        String typeAndUser = pactTypeIntro + " " + mPact.getType() + " "
+                + pactTypeMiddle + " " + userName;
 
         pactTypeAndUserView.setText(typeAndUser);
         pactDescriptionView.setText(mPact.getDescription());
@@ -111,9 +127,9 @@ public class PactFragment extends Fragment {
         String creationDateString;
 
         // Spanish is not standard so we have to create it.
-        Locale spanishLocale = new Locale ("es", "ES");
+        Locale spanishLocale = new Locale("es", "ES");
 
-        if (deviceLanguage.equals(spanishLocale)){
+        if (deviceLanguage.equals(spanishLocale)) {
             creationDateString = new SimpleDateFormat("dd/MM/yyyy", spanishLocale).format(creationDate);
         } else {
             // English by default.
@@ -123,7 +139,7 @@ public class PactFragment extends Fragment {
         pactCreationDateView.setText(creationDateStringStart + " " + creationDateString);
 
         // Hide the "not accepted" if necessary.
-        if (mPact.getAccepted()){
+        if (mPact.getAccepted()) {
             view.findViewById(R.id.pact_not_accepted_layout).setVisibility(View.INVISIBLE);
         } else {
             // Set the accept pact callback.
@@ -131,7 +147,7 @@ public class PactFragment extends Fragment {
 
             acceptPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     mListener.onAcceptPact(mPact);
                 }
             });
@@ -141,7 +157,7 @@ public class PactFragment extends Fragment {
 
             rejectPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     mListener.onRejectPact(mPact);
                 }
             });
@@ -151,7 +167,7 @@ public class PactFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnPactFragmentInteractionListener) activity;
@@ -162,13 +178,13 @@ public class PactFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
@@ -178,7 +194,12 @@ public class PactFragment extends Fragment {
         }
     }
 
-    public void pactRequestAnswered(boolean accepted){
+    /**
+     * When a pact request is answered {@link MainActivity} tells this fragment the backend did it's work.
+     *
+     * @param accepted whether or not the pact request was accepted.
+     */
+    public final void pactRequestAnswered(final boolean accepted) {
         // Hide the "pact not accepted" section.
         View view = getView();
         if (view != null) {
@@ -201,8 +222,18 @@ public class PactFragment extends Fragment {
      * An interface to communicate with {@link MainActivity}.
      */
     public interface OnPactFragmentInteractionListener {
+        /**
+         * Triggered when the pact is accepted.
+         *
+         * @param pact this pact.
+         */
         void onAcceptPact(Pact pact);
+
+        /**
+         * Triggered when the pact is rejected.
+         *
+         * @param pact this pact.
+         */
         void onRejectPact(Pact pact);
     }
-
 }

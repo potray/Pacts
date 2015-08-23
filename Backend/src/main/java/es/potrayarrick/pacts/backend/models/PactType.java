@@ -19,10 +19,12 @@ public class PactType {
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
-    public PactType() { }
+    public PactType() {
+    }
 
     /**
      * Default constructor.
+     *
      * @param type the type.
      */
     public PactType(final String type) {
@@ -31,7 +33,12 @@ public class PactType {
     }
 
 
-    public String getType() {
+    /**
+     * Gets {@link #type}.
+     *
+     * @return {@link #type}.
+     */
+    public final String getType() {
         return type;
     }
 }

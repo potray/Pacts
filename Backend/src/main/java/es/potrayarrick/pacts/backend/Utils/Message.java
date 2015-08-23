@@ -34,6 +34,7 @@ public class Message {
 
     /**
      * Default constructor.
+     *
      * @param str the message.
      */
     public Message(final String str) {
@@ -42,6 +43,7 @@ public class Message {
 
     /**
      * Get the message.
+     *
      * @return the message.
      */
     @SuppressWarnings("unused") // The client uses this method.
@@ -52,6 +54,7 @@ public class Message {
     /**
      * Method for check if the message is a success message in case the constants are inaccessible
      * (Android client).
+     *
      * @return if the message is success.
      */
     @SuppressWarnings("unused") // The client uses this method.
@@ -62,6 +65,7 @@ public class Message {
     /**
      * Method for check if the message is an error message in case the constants are inaccessible
      * (Android client).
+     *
      * @return if the message is success.
      */
     @SuppressWarnings("unused") // The client uses this method.

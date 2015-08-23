@@ -31,17 +31,18 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
 public class Register {
     /**
      * Register a new user.
-     * @param email the user email.
+     *
+     * @param email    the user email.
      * @param password the user password.
-     * @param name the user name.
-     * @param surname the user surname.
+     * @param name     the user name.
+     * @param surname  the user surname.
      * @return a message telling success or error.
      */
-    @ApiMethod (name = "userRegistration")
-    public final Message userRegistration(@Named ("email") final String email,
-                                           @Named ("password") final String password,
-                                           @Named ("name") final String name,
-                                           @Named ("surname") final String surname) {
+    @ApiMethod(name = "userRegistration")
+    public final Message userRegistration(@Named("email") final String email,
+                                          @Named("password") final String password,
+                                          @Named("name") final String name,
+                                          @Named("surname") final String surname) {
         //Check if email exists
         User user = ofy().load().type(User.class).id(email).now();
         if (user != null) {

@@ -27,7 +27,8 @@ public final class OfyService {
     /**
      * Private constructor so this class can't be instanced.
      */
-    private OfyService() { }
+    private OfyService() {
+    }
 
     static {
         factory().register(User.class);
@@ -66,7 +67,7 @@ public final class OfyService {
                 testUser.addFriend(testFriend2Key);
 
                 request = new FriendRequest(testUserKey, testFriendKey);
-                request2 =  new FriendRequest(testFriendKey, testUserKey);
+                request2 = new FriendRequest(testFriendKey, testUserKey);
 
                 ofy().save().entity(request).now();
                 ofy().save().entity(request2).now();
@@ -94,7 +95,6 @@ public final class OfyService {
                 testFriend2.sendPactRequest(testRequest);
 
 
-
                 ofy().save().entity(testUser).now();
                 ofy().save().entity(testFriend).now();
                 ofy().save().entity(testFriend2).now();
@@ -109,6 +109,7 @@ public final class OfyService {
 
     /**
      * A time saver. Just for typing less code.
+     *
      * @return the Objectify service.
      */
     public static Objectify ofy() {
@@ -117,6 +118,7 @@ public final class OfyService {
 
     /**
      * Another time server for typing less code.
+     *
      * @return the Objectify factory.
      */
     public static ObjectifyFactory factory() {

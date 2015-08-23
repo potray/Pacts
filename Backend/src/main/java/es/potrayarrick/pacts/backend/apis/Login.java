@@ -29,7 +29,8 @@ public class Login {
 
     /**
      * Login a user.
-     * @param email the email of the user.
+     *
+     * @param email    the email of the user.
      * @param password the password of the user.
      * @return null if the user exists, the new user if it doesn't.
      */

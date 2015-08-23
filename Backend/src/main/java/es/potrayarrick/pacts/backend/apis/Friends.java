@@ -29,13 +29,14 @@ import static es.potrayarrick.pacts.backend.OfyService.ofy;
 public class Friends {
     /**
      * A user sends a friend request to another.
-     * @param senderEmail the user who sent the request.
+     *
+     * @param senderEmail   the user who sent the request.
      * @param receiverEmail the user to receive the request.
      * @return success if the request was sent, error if not.
      */
     @ApiMethod(name = "sendFriendRequest")
-    public final Message sendFriendRequest(@Named ("senderEmail") final String senderEmail,
-                                            @Named ("receiverEmail") final String receiverEmail) {
+    public final Message sendFriendRequest(@Named("senderEmail") final String senderEmail,
+                                           @Named("receiverEmail") final String receiverEmail) {
         User sender = ofy().load().type(User.class).id(senderEmail).now();
         User receiver = ofy().load().type(User.class).id(receiverEmail).now();
 
@@ -69,13 +70,14 @@ public class Friends {
 
     /**
      * Answer a friend request.
+     *
      * @param requestId The request of the request to answer.
-     * @param answer The answer.
+     * @param answer    The answer.
      * @return A message with SUCCESS, for communication purposes.
      */
     @ApiMethod(name = "answerFriendRequest")
-    public final Message answerFriendRequest(@Named ("requestId") final long requestId,
-                                             @Named ("answer") final String answer) {
+    public final Message answerFriendRequest(@Named("requestId") final long requestId,
+                                             @Named("answer") final String answer) {
         //Get the request
         FriendRequest request = ofy().load().type(FriendRequest.class).id(requestId).now();
         User receiver = request.getReceiver();
@@ -112,6 +114,7 @@ public class Friends {
 
     /**
      * Get an user's friends.
+     *
      * @param email the email of the user.
      * @return the friends of the user.
      */
@@ -125,6 +128,7 @@ public class Friends {
 
     /**
      * Get an user's pending friend requests.
+     *
      * @param email the email of the user.
      * @return the pending friend requests of the user.
      */

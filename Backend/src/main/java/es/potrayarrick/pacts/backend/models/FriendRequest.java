@@ -38,11 +38,13 @@ public class FriendRequest {
      * No-arg constructor for objectify.
      */
     @SuppressWarnings("unused")
-    public FriendRequest() { }
+    public FriendRequest() {
+    }
 
     /**
      * Default constructor.
-     * @param sender The key of the user who sent the request.
+     *
+     * @param sender   The key of the user who sent the request.
      * @param receiver The -key of the user the sender sent the request to.
      */
     public FriendRequest(final Key<User> sender, final Key<User> receiver) {
@@ -52,6 +54,7 @@ public class FriendRequest {
 
     /**
      * Get the user who sent the request.
+     *
      * @return the user who sent the request.
      */
     public final User getSender() {
@@ -60,6 +63,7 @@ public class FriendRequest {
 
     /**
      * Get the user who received the request.
+     *
      * @return the user who received the request.
      */
     public final User getReceiver() {
@@ -68,6 +72,7 @@ public class FriendRequest {
 
     /**
      * Get the request id.
+     *
      * @return the request id.
      */
     @SuppressWarnings("unused") // The frontend uses this method.

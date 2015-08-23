@@ -85,13 +85,14 @@ public class Pacts {
 
     /**
      * Performs an action on a pact.
+     *
      * @param pactId the id of the pact to perform the action.
      * @param action the action to perform.
      * @return a success message.
      */
     @ApiMethod(name = "pactAction")
     public final Message pactAction(@Named("pactId") final Long pactId,
-                                  @Named("action") final String action) {
+                                    @Named("action") final String action) {
         // Get pact.
         Pact pact = ofy().load().type(Pact.class).id(pactId).now();
 

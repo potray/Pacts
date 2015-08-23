@@ -331,21 +331,15 @@ public class MainActivity extends AppCompatActivity implements
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactRequestsFragment).addToBackStack(null).commit();
     }
 
+    @Override
+    public void onPact(Pact pact) {
+        showPact(pact);
+    }
+
 
     @Override
     public void onPactRequestItemPressed(Pact pact) {
-        // Set the pact fragment arguments and show it.
-        hideDrawer(pact.getName());
-
-        // We use an ArrayList to automatically serialize the pact.
-        ArrayList<Pact> pactArgument = new ArrayList<>();
-        pactArgument.add(pact);
-
-        Bundle argsBundle = new Bundle();
-        argsBundle.putSerializable(PactFragment.ARG_PACT, pactArgument);
-
-        mPactFragment.setArguments(argsBundle);
-        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactFragment).addToBackStack(null).commit();
+        showPact(pact);
     }
 //endregion
 
@@ -405,6 +399,25 @@ public class MainActivity extends AppCompatActivity implements
         finish();
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * Shows the pact fragment populated with a pact information.
+     * @param pact the pact.
+     */
+    private void showPact (Pact pact) {
+        // Set the pact fragment arguments and show it.
+        hideDrawer(pact.getName());
+
+        // We use an ArrayList to automatically serialize the pact.
+        ArrayList<Pact> pactArgument = new ArrayList<>();
+        pactArgument.add(pact);
+
+        Bundle argsBundle = new Bundle();
+        argsBundle.putSerializable(PactFragment.ARG_PACT, pactArgument);
+
+        mPactFragment.setArguments(argsBundle);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, mPactFragment).addToBackStack(null).commit();
     }
 
     /**

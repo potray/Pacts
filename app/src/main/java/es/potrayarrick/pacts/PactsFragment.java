@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -105,7 +106,12 @@ public class PactsFragment extends Fragment {
             PactsAdapter adapter = new PactsAdapter(view.getContext(), pactItems);
             pactListView.setAdapter(adapter);
 
-            // TODO addListener.
+            pactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mListener.onPact(mPacts.get(position));
+                }
+            });
         }
         return view;
     }
@@ -178,6 +184,7 @@ public class PactsFragment extends Fragment {
      */
     public interface OnPactsFragmentInteractionListener {
         void onMenuPactsRequests();
+        void onPact(Pact pact);
     }
 
     /**

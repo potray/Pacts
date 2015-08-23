@@ -22,7 +22,7 @@ public final class Utils {
     /**
      * If I'm testing on my local machine or in GAE.
      */
-    public static final boolean LOCAL_TESTING = true;
+    public static final boolean LOCAL_TESTING = false;
 
     /**
      * File name for shared preferences.

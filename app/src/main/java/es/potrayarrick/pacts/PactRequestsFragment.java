@@ -26,11 +26,23 @@ import backend.pacts.potrayarrick.es.pacts.model.PactRequest;
  * The pact requests fragment.
  */
 public class PactRequestsFragment extends Fragment {
-    public static final String ARG_PACT_REQUESTS = "pact requests";
+    /**
+     * Debug tag.
+     */
     private static final String TAG = "PactRequestsFragment";
+    /**
+     * An argument name for {@link #newInstance(ArrayList)} <code>pactRequests</code> parameter.
+     */
+    public static final String ARG_PACT_REQUESTS = "pact requests";
 
+    /**
+     * The pact requests.
+     */
     private ArrayList<PactRequest> mPactRequests;
 
+    /**
+     * An instance of {@link es.potrayarrick.pacts.PactRequestsFragment.OnPactRequestsInteractionListener}.
+     */
     private OnPactRequestsInteractionListener mListener;
 
     /**
@@ -41,7 +53,7 @@ public class PactRequestsFragment extends Fragment {
      * @return A new instance of fragment PactRequestsFragment.
      */
     @SuppressWarnings("unused")
-    public static PactRequestsFragment newInstance(ArrayList<PactRequest> pactRequests) {
+    public static PactRequestsFragment newInstance(final ArrayList<PactRequest> pactRequests) {
         PactRequestsFragment fragment = new PactRequestsFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PACT_REQUESTS, pactRequests);
@@ -52,10 +64,12 @@ public class PactRequestsFragment extends Fragment {
     /**
      * Required empty public constructor.
      */
-    public PactRequestsFragment() { }
+    public PactRequestsFragment() {
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @SuppressWarnings("unchecked")
+    public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Log.d(TAG, "onCreate - " + getArguments().toString());
@@ -64,7 +78,8 @@ public class PactRequestsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                                   final Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pact_requests, container, false);
 
@@ -80,15 +95,15 @@ public class PactRequestsFragment extends Fragment {
         ArrayList<PactRequestItem> listItems = new ArrayList<>();
         ListView listView = (ListView) view.findViewById(R.id.pact_requests_list);
 
-        if (mPactRequests != null){
-            for (PactRequest request: mPactRequests){
+        if (mPactRequests != null) {
+            for (PactRequest request : mPactRequests) {
 
                 PactRequestItem item = new PactRequestItem();
                 Pact pact = request.getPact();
                 item.pactName = pact.getName();
 
                 String email = pact.getUser1Email();
-                if (email.equals(((MainActivity)getActivity()).getUserEmail())){
+                if (email.equals(((MainActivity) getActivity()).getUserEmail())) {
                     item.userName = pact.getUser2CompleteName();
                 } else {
                     item.userName = pact.getUser1CompleteName();
@@ -104,7 +119,7 @@ public class PactRequestsFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
                 mListener.onPactRequestItemPressed(mPactRequests.get(position).getPact());
             }
         });
@@ -114,7 +129,7 @@ public class PactRequestsFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public final void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnPactRequestsInteractionListener) activity;
@@ -125,31 +140,32 @@ public class PactRequestsFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
+    public final void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
      * Deletes a pact request from the list.
+     *
      * @param pact the pact.
      * @return true if {@link #mPactRequests} is empty, so {@link PactsFragment} can hide the
      * notification menu.
      * @see PactsFragment#setHidePactRequestButton(boolean)
      */
-    public boolean deletePactRequest(Pact pact){
-        for (PactRequest pactRequest : mPactRequests){
+    public final boolean deletePactRequest(final Pact pact) {
+        for (PactRequest pactRequest : mPactRequests) {
             if (pactRequest.getPact().getId().equals(pact.getId())) {
                 mPactRequests.remove(pactRequest);
             }
@@ -162,6 +178,10 @@ public class PactRequestsFragment extends Fragment {
      * An interface to communicate with {@link MainActivity}.
      */
     public interface OnPactRequestsInteractionListener {
+        /**
+         * Triggered when a pact request is pressed on the list.
+         * @param pact the pact.
+         */
         void onPactRequestItemPressed(Pact pact);
     }
 
@@ -169,23 +189,42 @@ public class PactRequestsFragment extends Fragment {
      * A class that wraps a list item contents. It provides usability and extension for later use.
      */
     private class PactRequestItem {
-        // I make them protected so I don't have to access them with methods.
-        protected String pactName;
-        protected String userName;
+        /**
+         * The pact name.
+         */
+        private String pactName;
+        /**
+         * The name and surname of the other user of the pact.
+         */
+        private String userName;
     }
 
+    /**
+     * An adapter for the pact request list.
+     */
     private class PactRequestsAdapter extends BaseAdapter {
 
-        Context context;
-        ArrayList<PactRequestItem> items;
+        /**
+         * The context.
+         */
+        private Context context;
+        /**
+         * A list of pact requests.
+         */
+        private ArrayList<PactRequestItem> items;
 
-        public PactRequestsAdapter(Context context, ArrayList<PactRequestItem> items) {
+        /**
+         * The constructor.
+         * @param context the context.
+         * @param items a list of pact requests.
+         */
+        public PactRequestsAdapter(final Context context, final ArrayList<PactRequestItem> items) {
             this.context = context;
             this.items = new ArrayList<>(items);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
             View v = convertView;
 
             if (v == null) {
@@ -213,12 +252,12 @@ public class PactRequestsFragment extends Fragment {
         }
 
         @Override
-        public Object getItem(int position) {
+        public Object getItem(final int position) {
             return items.get(position);
         }
 
         @Override
-        public long getItemId(int position) {
+        public long getItemId(final int position) {
             return position;
         }
     }

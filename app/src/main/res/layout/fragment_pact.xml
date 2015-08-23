@@ -46,7 +46,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/primary_dark_material_light"
-                android:layout_below="@+id/pact_description"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="false"
                 android:id="@+id/separator" />

@@ -14,8 +14,10 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -133,10 +135,18 @@ public class MainActivity extends AppCompatActivity implements
      */
     private ArrayList<android.app.Fragment> mDrawerHandledFragments;
 
+    /**
+     * The progress bar (circle).
+     */
+    private ProgressBarCircularIndeterminate mProgressBar;
+
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mProgressBar = (ProgressBarCircularIndeterminate) findViewById(R.id.progress_bar);
+        showProgress(true);
 
         mPreviousTitleStack = new Stack<>();
 
@@ -339,8 +349,53 @@ public class MainActivity extends AppCompatActivity implements
     public final void onPactRequestItemPressed(final Pact pact) {
         showPact(pact);
     }
+
+
+    @Override
+    public final void onAcceptPact(final Pact pact) {
+        PactActionAsyncTask task = new PactActionAsyncTask(pact, "ACCEPT");
+        task.execute();
+    }
+
+    @Override
+    public final void onRejectPact(final Pact pact) {
+        PactActionAsyncTask task = new PactActionAsyncTask(pact, "REJECT");
+        task.execute();
+    }
+
+    @Override
+    public void onFragmentInteraction(final Uri uri) {
+
+    }
 //endregion
 
+    /**
+     * Shows or hides the progress bar. If it shows it then it hides everything else, including
+     * the menu.
+     * @param show whether to show it or not.
+     */
+    private void showProgress (final boolean show){
+        Log.d(TAG, "showProgress " + show);
+        ActionBar actionBar = getSupportActionBar();
+        View fragmentContainer = findViewById(R.id.fragment_container);
+
+        if (show){
+            // Hide the action bar and the fragment, and show the progress bar.
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+            fragmentContainer.setVisibility(View.INVISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
+
+        } else {
+            // Show the progress bar and the fragment, and hide the progress bar.
+            if (actionBar != null) {
+                actionBar.show();
+            }
+            fragmentContainer.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
 
     /**
      * Restores the action bar, mainly for updating the title.
@@ -442,22 +497,6 @@ public class MainActivity extends AppCompatActivity implements
         return mEmail;
     }
 
-    @Override
-    public final void onAcceptPact(final Pact pact) {
-        PactActionAsyncTask task = new PactActionAsyncTask(pact, "ACCEPT");
-        task.execute();
-    }
-
-    @Override
-    public final void onRejectPact(final Pact pact) {
-        PactActionAsyncTask task = new PactActionAsyncTask(pact, "REJECT");
-        task.execute();
-    }
-
-    @Override
-    public void onFragmentInteraction(final Uri uri) {
-
-    }
 
 
     /**
@@ -573,6 +612,8 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(final Boolean aBoolean) {
             //Load the pacts fragment
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
+
+            showProgress(false);
         }
     }
 

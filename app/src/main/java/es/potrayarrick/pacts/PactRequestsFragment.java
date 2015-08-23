@@ -180,6 +180,7 @@ public class PactRequestsFragment extends Fragment {
     public interface OnPactRequestsInteractionListener {
         /**
          * Triggered when a pact request is pressed on the list.
+         *
          * @param pact the pact.
          */
         void onPactRequestItemPressed(Pact pact);
@@ -215,8 +216,9 @@ public class PactRequestsFragment extends Fragment {
 
         /**
          * The constructor.
+         *
          * @param context the context.
-         * @param items a list of pact requests.
+         * @param items   a list of pact requests.
          */
         public PactRequestsAdapter(final Context context, final ArrayList<PactRequestItem> items) {
             this.context = context;

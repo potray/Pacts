@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public final void onPact(final Pact pact) {
+    public final void onPactPressed(final Pact pact) {
         showPact(pact);
     }
 

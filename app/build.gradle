@@ -9,7 +9,7 @@ android {
         applicationId "es.potrayarrick.pacts"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 5
+        versionCode 6
         versionName "Beta - Basic pacts functionality"
     }
     buildTypes {

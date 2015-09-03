@@ -175,11 +175,6 @@ public class MainActivity extends AppCompatActivity implements
         mUserInfoTask.execute();
         mManageFriendRequestTask = new ManageFriendRequestTask();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
-
     }
 
     @Override
@@ -612,6 +607,9 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(final Boolean aBoolean) {
             //Load the pacts fragment
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, mDrawerHandledFragments.get(0)).commit();
+
+            // Set up the drawer.
+            mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
             showProgress(false);
         }

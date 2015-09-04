@@ -11,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
     /**
-     * The task for sending friend requests responses to backend.
-     */
-    private ManageFriendRequestTask mManageFriendRequestTask;
-    /**
      * The user email.
      */
     private String mEmail;
@@ -173,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements
 
         UserInfoTask mUserInfoTask = new UserInfoTask(mEmail);
         mUserInfoTask.execute();
-        mManageFriendRequestTask = new ManageFriendRequestTask();
 
     }
 
@@ -312,7 +306,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     @SuppressWarnings("unchecked")
     public final void onFriendRequestInteraction(final FriendRequest request, final String message) {
-        mManageFriendRequestTask.execute(new Pair<>(request, message));
+        ManageFriendRequestTask task = new ManageFriendRequestTask(request, message);
+        task.execute();
     }
 
     @Override
@@ -369,12 +364,12 @@ public class MainActivity extends AppCompatActivity implements
      * the menu.
      * @param show whether to show it or not.
      */
-    private void showProgress (final boolean show){
+    private void showProgress(final boolean show) {
         Log.d(TAG, "showProgress " + show);
         ActionBar actionBar = getSupportActionBar();
         View fragmentContainer = findViewById(R.id.fragment_container);
 
-        if (show){
+        if (show) {
             // Hide the action bar and the fragment, and show the progress bar.
             if (actionBar != null) {
                 actionBar.hide();
@@ -618,13 +613,31 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * A task for managing friend requests.
      */
-    private class ManageFriendRequestTask extends AsyncTask<Pair<FriendRequest, String>, Void, Boolean> {
+    private class ManageFriendRequestTask extends AsyncTask<Void, Void, Boolean> {
+
+        /**
+         * The friend request.
+         */
+        private FriendRequest request;
+        /**
+         * The response to the friend request.
+         */
+        private String response;
+
+        /**
+         * Default constructor.
+         * @param request the request.
+         * @param response the response.
+         */
+        public ManageFriendRequestTask(final FriendRequest request, final String response) {
+            this.request = request;
+            this.response = response;
+        }
+
+
         @Override
-        @SafeVarargs
-        protected final Boolean doInBackground(final Pair<FriendRequest, String>... params) {
+        protected final Boolean doInBackground(final Void... params) {
             setUpFriendService();
-            FriendRequest request = params[0].first;
-            String response = params[0].second;
 
             try {
                 Message message = mFriendsService.answerFriendRequest(request.getId(), response).execute();

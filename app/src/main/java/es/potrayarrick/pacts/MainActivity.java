@@ -362,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Shows or hides the progress bar. If it shows it then it hides everything else, including
      * the menu.
+     *
      * @param show whether to show it or not.
      */
     private void showProgress(final boolean show) {
@@ -486,7 +487,6 @@ public class MainActivity extends AppCompatActivity implements
     public final String getUserEmail() {
         return mEmail;
     }
-
 
 
     /**
@@ -626,7 +626,8 @@ public class MainActivity extends AppCompatActivity implements
 
         /**
          * Default constructor.
-         * @param request the request.
+         *
+         * @param request  the request.
          * @param response the response.
          */
         public ManageFriendRequestTask(final FriendRequest request, final String response) {

@@ -69,6 +69,7 @@
     <!-- This is for getting sentences like "A blood pact with Peter" and then translate them-->
     <string name="pact_type_and_user_intro">A</string>
     <string name="pact_type_and_user_middle">pact with</string>
+    <string name="pact_type_promise">A promise with</string>
     <string name="pact_info_creation_date">Created on</string>
     <string name="pact_info_fulfill_date">Fulfilled on</string>
     <string name="pact_info_cancel_date">Canceled on</string>

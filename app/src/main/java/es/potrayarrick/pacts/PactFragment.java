@@ -106,6 +106,7 @@ public class PactFragment extends Fragment {
         String userName;
         String pactTypeIntro = getString(R.string.pact_type_and_user_intro);
         String pactTypeMiddle = getString(R.string.pact_type_and_user_middle);
+        String pactTypePromise = getString(R.string.pact_type_promise);
 
         if (((MainActivity) getActivity()).getUserEmail().equals(mPact.getUser1Email())) {
             userName = mPact.getUser2CompleteName();
@@ -113,8 +114,15 @@ public class PactFragment extends Fragment {
             userName = mPact.getUser1CompleteName();
         }
 
-        String typeAndUser = pactTypeIntro + " " + mPact.getType() + " "
-                + pactTypeMiddle + " " + userName;
+        String typeAndUser;
+
+        if (mPact.getPromise()){
+            typeAndUser = pactTypePromise + " " + userName;
+        } else {
+            typeAndUser = pactTypeIntro + " " + mPact.getType() + " "
+                    + pactTypeMiddle + " " + userName;
+        }
+
 
         pactTypeAndUserView.setText(typeAndUser);
         pactDescriptionView.setText(mPact.getDescription());

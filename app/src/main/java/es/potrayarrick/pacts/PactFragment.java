@@ -138,22 +138,27 @@ public class PactFragment extends Fragment {
 
         pactCreationDateView.setText(creationDateStringStart + " " + creationDateString);
 
+
+        Button rejectPactButton = (Button) view.findViewById(R.id.reject_pact_button);
+        Button acceptPactButton = (Button) view.findViewById(R.id.accept_pact_button);
+
+        // If the pact's user1's email is the same as the user, hide the accept and reject buttons.
+        if (mPact.getUser1Email().equals(((MainActivity)getActivity()).getUserEmail())){
+            rejectPactButton.setVisibility(View.INVISIBLE);
+            acceptPactButton.setVisibility(View.INVISIBLE);
+        }
+
         // Hide the "not accepted" if necessary.
         if (mPact.getAccepted()) {
             view.findViewById(R.id.pact_not_accepted_layout).setVisibility(View.INVISIBLE);
         } else {
-            // Set the accept pact callback.
-            Button acceptPactButton = (Button) view.findViewById(R.id.accept_pact_button);
-
+            // Set callbacks
             acceptPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     mListener.onAcceptPact(mPact);
                 }
             });
-
-            // Set the reject pact callback.
-            Button rejectPactButton = (Button) view.findViewById(R.id.reject_pact_button);
 
             rejectPactButton.setOnClickListener(new View.OnClickListener() {
                 @Override

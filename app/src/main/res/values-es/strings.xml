@@ -66,4 +66,5 @@
     <string name="pact_type_and_user_middle">con</string>
     <string name="select_pact_type">Selecciona tipo</string>
     <string name="type">Tipo</string>
+    <string name="pact_type_promise">Una promesa con</string>
 </resources>

@@ -230,7 +230,7 @@ public class CreatePactFragment extends Fragment {
                     continueTask = false;
                     pactDescription.setError(getString(R.string.error_field_required));
                     focusView = pactDescription;
-                } else if ((mPactTypes == null || mPactType.isEmpty()) && !isPromise) {
+                } else if (!isPromise && (mPactTypes == null || mPactType.isEmpty())) {
                     // There is no pact types.
                     continueTask = false;
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), R.string.error_no_pact_types, Toast.LENGTH_SHORT);
